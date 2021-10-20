@@ -11,9 +11,11 @@ class SymbolTable:
         self.prev = prev
         self.table = {}
         self.env = env
+        self.size = 0
 
     def add(self, id: str, symbol: Symbol):
         self.table[id] = symbol
+        self.size += 1
 
     def exist(self, id: str) -> bool:
         ts = self

@@ -1,10 +1,19 @@
 class Temporal:
     tmp = 0
     lbl = 0
+    P = 'p'
+    H = 'h'
 
     def __init__(self) -> None:
         self.code = ''
         self.temporales = []
+        self.funcs = ''
+        self.natives = ''
+        self.inFunc = False
+        self.inNatives = False
+
+        # Lista de Nativas
+        self.printString = False
 
     # funciones para temporales
 
@@ -38,18 +47,30 @@ class Temporal:
                 cont += 1
             header += " float64; \n"
 
-        header += "var P, H float64;\nvar stack [30101999]float64;\nvar heap [30101999]float64;\n\n"
+        header += "var p, h float64;\nvar stack [30101999]float64;\nvar heap [30101999]float64;\n\n"
 
         return header
 
     def get_code(self):
-        return f'{self.get_header()}\nfunc main(){{\n{self.code}\n}}'
+        return f'{self.get_header()}{self.natives}\n{self.funcs}\nfunc main(){{\n{self.code}\n}}'
 
-    def append_code(self, code):
-        self.code += f'{code}\n'
+    def append_code(self, code, tab='\t'):
+        if self.inNatives:
+            if self.natives == '':
+                self.natives = self.natives + '/*-----NATIVES-----*/\n'
+            self.natives = self.natives + tab + code
+        elif self.inFunc:
+            if self.funcs == '':
+                self.funcs = self.funcs + '/*-----FUNCS-----*/\n'
+            self.funcs = self.funcs + tab + code
+        else:
+            self.code = self.code + '\t' + code
 
     def add_exp(self, result, left, right, op):
         self.append_code(f'{result}={left}{op}{right};\n')
+
+    def add_assing(self, result, exp):
+        self.append_code(f'{result}={exp};\n')
 
     def add_print(self, t, value):
         self.append_code(f'fmt.Printf("%{t}", {value});\n')
@@ -71,9 +92,9 @@ class Temporal:
         self.append_code(f'/* {comment} */\n')
 
     def addBeginFunc(self, nombre):
-        #if not self.inNatives:
-        #    self.inFunc = True
-        self.append_code(f'func {nombre}(){{\n')
+        if not self.inNatives:
+            self.inFunc = True
+        self.append_code(f'func {nombre}(){{\n', '')
 
     def addEndFunc(self):
         self.append_code('return;\n}\n')
@@ -84,6 +105,16 @@ class Temporal:
 
     def get_stack(self, place, pos):
         self.append_code(f'{place}=stack[int({pos})];\n')
+
+    # Entoros
+    def new_env(self, size):
+        self.append_code(f'p=p+{size};\n')
+
+    def llamar_func(self, name):
+        self.append_code(f'{name}();\n')
+
+    def ret_env(self, size):
+        self.append_code(f'p=p-{size};\n')
 
     # Funciones para manejar el heap
 
@@ -105,6 +136,12 @@ class Temporal:
 
     # Funciones Nativas
     def fPrintString(self):
+
+        if self.printString:
+            return
+        self.printString = True
+        self.inNatives = True
+
         self.addBeginFunc('print_string')
 
         self.new_label()
@@ -135,8 +172,11 @@ class Temporal:
 
         self.add_if(tmp_c, '==', '-1', return_lbl)
 
-        self.add_print('c', tmp_c)
+        self.add_print('c', f'int({tmp_c})')
         self.add_exp(tmp_h, tmp_h, '1', '+')
 
         self.add_goto(fin_cadena)
         self.imprimir_label(return_lbl)
+        self.addEndFunc()
+
+        self.inNatives = False

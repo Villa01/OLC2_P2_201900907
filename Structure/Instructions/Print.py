@@ -44,17 +44,41 @@ class Print(Instruction):
             if t == Types.INT64:
                 tmp.append_code(f'fmt.Printf("%d", int({valor}));\n')
             elif t == Types.FLOAT64:
-                tmp.add_print("f.4", valor)
+                tmp.add_print("f", valor)
             elif t == Types.BOOL:
                 if val:
                     tmp.print_true()
                 else:
                     tmp.print_false()
             elif t == Types.STRING:
-                param_temp = tmp.new_temp()
+                tmp.new_temp()
+                param_temp = tmp.get_temp()
 
-                tmp.add_exp(param_temp, 'p', driver.)
+                tmp.add_assing(param_temp, tmp.H)
 
+                # tmp.add_exp(param_temp, 'p', 1, '+')
+                # tmp.add_exp(param_temp, param_temp, 1, '+')
+                for letra in valor:
+                    tmp.set_heap(tmp.H, ord(letra))
+                    tmp.add_exp(tmp.H, tmp.H, 1, '+')
+
+                tmp.set_heap(tmp.H, -1)
+
+                # cambio de entorno
+                tmp.new_temp()
+                temp_env = tmp.get_temp()
+                tmp.add_exp(temp_env, tmp.P, symbol_table.size,'+')
+                tmp.add_exp(temp_env, temp_env, 1, '+')
+                tmp.set_stack(temp_env, param_temp)
+
+                tmp.new_env(symbol_table.size)
+                tmp.fPrintString()
+                tmp.llamar_func('print_string')
+                tmp.ret_env(symbol_table.size)
+
+                tmp.new_temp()
+                temporal = tmp.get_temp()
+                tmp.get_stack(temporal, 'p')
 
         if self.n:
             tmp.add_print('c', 10)
