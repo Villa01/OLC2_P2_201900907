@@ -49,6 +49,8 @@ class WhileLoop(Instruction):
         # Agregar un nuevo entorno
         ts_local = SymbolTable(symbol_table, "WHILE")
         driver.agregarTabla(ts_local)
+        ts_local.break_lbl = condition.false_lbl
+        ts_local.continue_lbl = continue_lbl
 
         tmp.imprimir_label(condition.true_lbl)
 

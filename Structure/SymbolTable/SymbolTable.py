@@ -12,6 +12,8 @@ class SymbolTable:
         self.table = {}
         self.env = env
         self.size = 0
+        self.break_lbl = ''
+        self.continue_lbl = ''
 
     def add(self, id: str, symbol: Symbol):
         self.table[id] = symbol
