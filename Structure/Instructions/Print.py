@@ -1,4 +1,5 @@
 from Structure.AST.Node import Node
+from Structure.Instructions.Transference_structures.Return import Return
 from Structure.Interfaces.Instruction import Instruction
 from Structure.Interfaces.Expression import Expression
 from Structure.Driver import Driver
@@ -37,20 +38,30 @@ class Print(Instruction):
 
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
         for exp in self.exps:
-            valor = exp.compilar(driver, symbol_table, tmp)
+            ret: Return = exp.compilar(driver, symbol_table, tmp)
             val = exp.getValue(driver, symbol_table)
             t = exp.getType(driver, symbol_table)
+            valor = ret.value
 
             if t == Types.INT64:
                 tmp.append_code(f'fmt.Printf("%d", int({valor}));\n')
             elif t == Types.FLOAT64:
                 tmp.add_print("f", valor)
             elif t == Types.BOOL:
-                if val:
-                    tmp.print_true()
-                else:
-                    tmp.print_false()
+                temp_label = tmp.new_label()
+                tmp.imprimir_label(ret.true_lbl)
+                tmp.print_true()
+
+                tmp.add_goto(temp_label)
+
+                tmp.imprimir_label(ret.false_lbl)
+                tmp.print_false()
+
+                tmp.imprimir_label(temp_label)
+
+
             elif t == Types.STRING:
+                # TODO: modificar la concatenacion de strings
                 tmp.new_temp()
                 param_temp = tmp.get_temp()
 
@@ -67,7 +78,7 @@ class Print(Instruction):
                 # cambio de entorno
                 tmp.new_temp()
                 temp_env = tmp.get_temp()
-                tmp.add_exp(temp_env, tmp.P, symbol_table.size,'+')
+                tmp.add_exp(temp_env, tmp.P, symbol_table.size, '+')
                 tmp.add_exp(temp_env, temp_env, 1, '+')
                 tmp.set_stack(temp_env, param_temp)
 

@@ -17,6 +17,9 @@ class SymbolTable:
         self.table[id] = symbol
         self.size += 1
 
+    def get_size(self):
+        return self.size
+
     def exist(self, id: str) -> bool:
         ts = self
         while ts is not None:

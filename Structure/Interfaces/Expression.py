@@ -1,7 +1,8 @@
 import sys
 
-sys.path.append('../')
+from Structure.Instructions.Transference_structures.Return import Return
 
+sys.path.append('../')
 
 from Structure.Driver import Driver
 from Structure.SymbolTable.SymbolTable import SymbolTable
@@ -9,6 +10,8 @@ from Temporal import Temporal
 
 
 class Expression:
+    true_label = ''
+    false_label = ''
 
     def getType(self, driver: Driver, symbolTable):
         """
@@ -34,8 +37,16 @@ class Expression:
         """
         pass
 
-    def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
+    def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal) -> Return:
         pass
+
+    def checkLabels(self, tmp: Temporal):
+        if self.true_label == '':
+            tmp.new_label()
+            self.true_label = tmp.get_label()
+        if self.false_label == '':
+            tmp.new_label()
+            self.false_label = tmp.get_label()
 
     def traverse(self):
         """
