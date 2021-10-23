@@ -1,4 +1,3 @@
-
 from Structure.AST.Node import Node
 from Structure.Instructions.Transference_structures.ReturnStructure import ReturnStructure
 from Structure.Instructions.Transference_structures.ContinueStructure import ContinueStructure
@@ -8,11 +7,12 @@ from Structure.Interfaces.Expression import Expression
 from Structure.Driver import Driver
 from Structure.SymbolTable.SymbolTable import SymbolTable
 from Structure.SymbolTable.Type import Types
+from Temporal import Temporal
 
 
-class WhileLoop (Instruction):
+class WhileLoop(Instruction):
 
-    def __init__(self, condition : Expression, ins_list, line, column) -> None:
+    def __init__(self, condition: Expression, ins_list, line, column) -> None:
         super().__init__()
         self.condition = condition
         self.ins_list = ins_list
@@ -37,24 +37,39 @@ class WhileLoop (Instruction):
                 else:
                     pass
                 continue
-
-
         else:
             driver.agregarError(f'La condicion del while debe ser del tipo bool', self.line, self.column)
 
+    def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
+        continue_lbl = tmp.new_label()
+        tmp.imprimir_label(continue_lbl)
+
+        condition = self.condition.compilar(driver, symbol_table, tmp)
+
+        # Agregar un nuevo entorno
+        ts_local = SymbolTable(symbol_table, "WHILE")
+        driver.agregarTabla(ts_local)
+
+        tmp.imprimir_label(condition.true_lbl)
+
+        for ins in self.ins_list:
+            ins.compilar(driver, ts_local, tmp)
+        tmp.add_goto(continue_lbl)
+
+        tmp.imprimir_label(condition.false_lbl)
 
     def traverse(self):
         padre = Node("WHILE", "")
 
-        padre.AddHijo(Node("while",""))
+        padre.AddHijo(Node("while", ""))
         padre.AddHijo(self.condition.traverse())
 
-        if self.list_ins and len(self.list_ins)>0:
-            hijo_ins = Node("INSTRUCCIONES","")
+        if self.list_ins and len(self.list_ins) > 0:
+            hijo_ins = Node("INSTRUCCIONES", "")
 
             for ins in self.list_ins:
                 hijo_ins.AddHijo(ins.traverse())
             padre.AddHijo(hijo_ins)
 
-        padre.AddHijo(Node("end",""))
+        padre.AddHijo(Node("end", ""))
         return padre

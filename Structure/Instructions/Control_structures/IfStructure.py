@@ -7,6 +7,8 @@ from Structure.Interfaces.Expression import Expression
 from Structure.Driver import Driver
 from Structure.SymbolTable.SymbolTable import SymbolTable
 from Structure.SymbolTable.Type import Types
+from Temporal import Temporal
+
 
 class IfStructure (Instruction):
 
@@ -46,6 +48,29 @@ class IfStructure (Instruction):
                         return res
 
             driver.agregarTabla(local_ts)
+
+    def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
+
+        tmp.add_comment('Compilacion IF')
+        condition = self.condition.compilar(driver, symbol_table, tmp)
+
+        if condition.type != Types.BOOL:
+            driver.agregarError('La condicion no es booleana', self.line, self.column)
+            return
+        tmp.imprimir_label(condition.true_lbl)
+
+        for ins in self.if_ins:
+            ins.compilar(driver, symbol_table, tmp)
+
+        if len(self.else_ins) != 0:
+            exit_if = tmp.new_label()
+            tmp.add_goto(exit_if)
+
+        tmp.imprimir_label(condition.false_lbl)
+        if len(self.else_ins) != 0:
+            for ins in self.else_ins:
+                ins.compilar(driver, symbol_table, tmp)
+            tmp.imprimir_label(exit_if)
 
     def traverse(self):
         padre = Node("IF","")
