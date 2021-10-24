@@ -12,12 +12,11 @@ class Types(Enum):
     RANGE = 8
 
 
-
 class Type:
 
     def __init__(self, stype: str) -> None:
         self.stype = stype
-        self.type = getType(stype)
+        self.type = self.getType(stype)
 
     def getType(self, s: str):
         if s == "INT64":

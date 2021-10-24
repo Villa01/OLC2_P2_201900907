@@ -1,5 +1,7 @@
 import sys
 
+from Structure.SymbolTable.Type import Types
+
 sys.path.append('../')
 
 from Structure.SymbolTable.Symbol import Symbol
@@ -14,18 +16,19 @@ class SymbolTable:
         self.size = 0
         self.break_lbl = ''
         self.continue_lbl = ''
+        self.return_lbl = ''
 
-    def add(self, id: str, symbol: Symbol):
-        self.table[id] = symbol
+    def add(self, idd: str, symbol: Symbol):
+        self.table[idd] = symbol
         self.size += 1
 
     def get_size(self):
         return self.size
 
-    def exist(self, id: str) -> bool:
+    def exist(self, idd: str) -> bool:
         ts = self
         while ts is not None:
-            exist = ts.table.get(id)
+            exist = ts.table.get(idd)
 
             if exist is not None:
                 return True
@@ -33,22 +36,22 @@ class SymbolTable:
             ts = ts.prev
         return False
 
-    def existsInActual(self, id: str) -> bool:
+    def existsInActual(self, idd: str) -> bool:
         ts = self
 
-        exist = ts.table.get(id)
+        exist = ts.table.get(idd)
 
         if exist is not None:
             return True
 
         return False
 
-    def getSymbol(self, id: str):
+    def getSymbol(self, idd: str):
         ts = self
-        while ts != None:
-            exist = ts.table.get(id)
+        while ts is not None:
+            exist = ts.table.get(idd)
 
-            if exist != None:
+            if exist is not None:
                 return exist
 
             ts = ts.prev

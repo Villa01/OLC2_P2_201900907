@@ -24,7 +24,7 @@ class Temporal:
     def new_temp(self):
         self.tmp += 1
         self.temporales.append(self.get_temp())
-        return  self.get_temp()
+        return self.get_temp()
 
     def get_temp(self):
         return f't{self.tmp}'
@@ -33,7 +33,7 @@ class Temporal:
 
     def new_label(self):
         self.lbl += 1
-        return  self.get_label()
+        return self.get_label()
 
     def get_label(self):
         return f'L{self.lbl}'

@@ -59,7 +59,6 @@ class Print(Instruction):
 
                 tmp.imprimir_label(temp_label)
 
-
             elif t == Types.STRING:
                 # TODO: modificar la concatenacion de strings
                 tmp.new_temp()
@@ -89,7 +88,7 @@ class Print(Instruction):
 
                 tmp.new_temp()
                 temporal = tmp.get_temp()
-                tmp.get_stack(temporal, 'p')
+                tmp.get_stack(temporal, tmp.P)
 
         if self.n:
             tmp.add_print('c', 10)

@@ -60,14 +60,14 @@ class Primitive(Expression):
 
         elif exp_type == Types.STRING:
             ret_temp = tmp.new_temp()
-            tmp.add_exp(ret_temp, 'H', '','')
+            tmp.add_exp(ret_temp, tmp.H, '', '')
 
             for letra in str(exp_value):
-                tmp.set_heap('H', ord(letra))
+                tmp.set_heap(tmp.H, ord(letra))
                 tmp.aumentar_heap()
-            tmp.set_heap('H', '-1')
+            tmp.set_heap(tmp.H, '-1')
             tmp.aumentar_heap()
-            return  Return(ret_temp, Types.STRING, True)
+            return Return(ret_temp, Types.STRING, True)
         else:
             # TODO: agregar tipos necesarios
             pass
