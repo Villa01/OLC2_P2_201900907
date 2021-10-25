@@ -19,8 +19,14 @@ class SymbolTable:
         self.return_lbl = ''
 
     def add(self, idd: str, symbol: Symbol):
+        symbol.position = self.size
         self.table[idd] = symbol
         self.size += 1
+
+    def add_func(self, idd:str, symbol: Symbol):
+        symbol.position = self.size
+        self.table[idd] = symbol
+
 
     def get_size(self):
         return self.size

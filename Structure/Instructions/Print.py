@@ -43,6 +43,16 @@ class Print(Instruction):
             t = exp.getType(driver, symbol_table)
             valor = ret.value
 
+            if t == Types.NOTHING:
+                if type(val) == int:
+                    t = Types.INT64
+                elif type(val) == float:
+                    t = Types.FLOAT64
+                elif type(val) == str:
+                    t = Types.STRING
+                elif type(val) == bool:
+                    t = Types.BOOL
+
             if t == Types.INT64:
                 tmp.append_code(f'fmt.Printf("%d", int({valor}));\n')
             elif t == Types.FLOAT64:

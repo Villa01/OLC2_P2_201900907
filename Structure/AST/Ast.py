@@ -22,7 +22,16 @@ class Ast:
 
     def compilar(self, driver, st, tmp: Temporal):
         for ins in self.instruction_list:
-            ins.compilar(driver, st, tmp)
+            if isinstance(ins, Function):
+                ins.addFunctionSymbol(driver, st)
+
+        for ins in self.instruction_list:
+            if not isinstance(ins, Function):
+                ins.compilar(driver, st, tmp)
+
+        for ins in self.instruction_list:
+            if isinstance(ins, Function):
+                ins.compilar(driver, st, tmp)
 
         driver.console += tmp.get_code()
 

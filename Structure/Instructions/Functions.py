@@ -18,7 +18,7 @@ class Function(Symbol, Instruction):
 
     def addFunctionSymbol(self, driver: Driver, st: SymbolTable):
         if not st.exist(self.identifier):
-            st.add(self.identifier, self)
+            st.add_func(self.identifier, self)
         else:
             driver.agregarError(f'No se encontró {self.identifier}', self.line, self.column)
 
@@ -35,22 +35,24 @@ class Function(Symbol, Instruction):
         return None
 
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
-        self.addFunctionSymbol(driver, symbol_table)
+        # self.addFunctionSymbol(driver, symbol_table)
         ts_local = SymbolTable(symbol_table, 'Funcion ' + self.identifier)
         return_lbl = tmp.new_temp()
         ts_local.size = 1
         ts_local.return_lbl = return_lbl
 
         for param in self.param_list:
+            param.is_global = False
+            ts_local.getSymbol(param.identifier)
             ts_local.add(param.identifier, param)
 
         tmp.addBeginFunc(self.identifier)
 
-        try:
-            for ins in self.ins_list:
-                ins.compilar(driver, symbol_table, tmp)
-        except:
-            driver.agregarError(f'Error al compilar instrucciones de {self.identifier}', self.line, self.column)
+        #try:
+        for ins in self.ins_list:
+            ins.compilar(driver, ts_local, tmp)
+        #except:
+        #    driver.agregarError(f'Error al compilar instrucciones de {self.identifier}', self.line, self.column)
 
         tmp.add_comment('Goto para que go no de error')
         tmp.add_goto(return_lbl)

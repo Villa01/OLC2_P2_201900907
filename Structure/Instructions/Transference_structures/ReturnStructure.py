@@ -3,6 +3,8 @@ from Structure.SymbolTable.SymbolTable import SymbolTable
 from Structure.Driver import Driver
 from Structure.Interfaces.Instruction import Instruction
 from Structure.Interfaces.Expression import Expression
+from Structure.SymbolTable.Type import Types
+from Temporal import Temporal
 
 
 class ReturnStructure(Instruction):
@@ -21,6 +23,26 @@ class ReturnStructure(Instruction):
             return self.exp.getValue(driver, ts)
         else:
             return self
+
+    def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
+        if symbol_table.return_lbl == '':
+            driver.agregarError('Return fuera de funcion', self.line, self.column)
+            return
+        value = self.exp.compilar(driver, symbol_table, tmp)
+
+        if value.type == Types.BOOL:
+            tmp_lbl = tmp.new_label()
+
+            tmp.imprimir_label(value.true_lbl)
+            tmp.set_stack(tmp.P, '1')
+            tmp.add_goto(tmp_lbl)
+
+            tmp.imprimir_label(value.false_lbl)
+            tmp.set_stack(tmp.P, '0')
+            tmp.imprimir_label(tmp_lbl)
+        else:
+            tmp.set_stack(tmp.P, value.value)
+        tmp.add_goto(symbol_table.return_lbl)
 
     def traverse(self):
         padre = Node("RETURN", "")
