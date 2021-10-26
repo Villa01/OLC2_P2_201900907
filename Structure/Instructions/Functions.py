@@ -51,6 +51,7 @@ class Function(Symbol, Instruction):
         #try:
         for ins in self.ins_list:
             ins.compilar(driver, ts_local, tmp)
+
         #except:
         #    driver.agregarError(f'Error al compilar instrucciones de {self.identifier}', self.line, self.column)
 

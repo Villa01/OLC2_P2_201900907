@@ -10,6 +10,26 @@ class Types(Enum):
     NOTHING = 6
     ARRAY = 7
     RANGE = 8
+    STRUCT = 9
+
+
+def get_type(var_value):
+    t = var_value
+    if type(var_value) == float:
+        t = Type("FLOAT64")
+    elif type(var_value) == int:
+        t = Type("INT64")
+    elif type(var_value) == str:
+        t = Type("STRING")
+    elif type(var_value) == bool:
+        t = Type("BOOL")
+    elif type(var_value) == list:
+        t = Type("ARRAY")
+    elif type(var_value) == range:
+        t = Type("RANGE")
+    else:
+        t = Type("NOTHING")
+    return t
 
 
 class Type:

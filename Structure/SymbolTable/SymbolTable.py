@@ -20,13 +20,14 @@ class SymbolTable:
 
     def add(self, idd: str, symbol: Symbol):
         symbol.position = self.size
+        symbol.in_heap = symbol.symbol_type == Types.STRING or symbol.symbol_type == Types.STRUCT
+        symbol.is_global = self.prev is None
         self.table[idd] = symbol
         self.size += 1
 
-    def add_func(self, idd:str, symbol: Symbol):
+    def add_func(self, idd: str, symbol: Symbol):
         symbol.position = self.size
         self.table[idd] = symbol
-
 
     def get_size(self):
         return self.size
@@ -52,7 +53,7 @@ class SymbolTable:
 
         return False
 
-    def getSymbol(self, idd: str):
+    def getSymbol(self, idd: str) -> Symbol:
         ts = self
         while ts is not None:
             exist = ts.table.get(idd)

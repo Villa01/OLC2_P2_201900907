@@ -19,7 +19,10 @@ class Identifier(Expression):
         temp_sym = ts.getSymbol(self.id)
 
         if temp_sym is not None:
-            return temp_sym.symbol_type.type
+            try:
+                return temp_sym.symbol_type.type
+            except:
+                return temp_sym.symbol_type
 
     def getValue(self, driver: Driver, ts: SymbolTable):
         temp_sym = ts.getSymbol(self.id)
@@ -33,6 +36,12 @@ class Identifier(Expression):
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal) -> Return:
         var = symbol_table.getSymbol(self.id)
 
+        t = None
+        try:
+            t = var.symbol_type.type
+        except:
+            t = var.symbol_type
+
         if var is None:
             driver.agregarError('La variable no ha sido inicializada', self.line, self.column)
             return
@@ -44,10 +53,10 @@ class Identifier(Expression):
         tmp.get_stack(temp, temp_pos)
 
         if var.symbol_type != Types.BOOL:
-            return Return(temp, var.symbol_type, True)
+            return Return(temp, t, True)
         self.checkLabels(tmp)
 
-        tmp.add_if(temp,'==', '1', self.true_label)
+        tmp.add_if(temp, '==', '1', self.true_label)
         tmp.add_goto(self.false_label)
 
         ret = Return(None, Types.BOOL, False)

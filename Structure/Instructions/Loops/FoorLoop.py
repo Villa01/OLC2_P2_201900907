@@ -7,7 +7,7 @@ from Structure.Interfaces.Instruction import Instruction
 from Structure.Interfaces.Expression import Expression
 from Structure.Driver import Driver
 from Structure.SymbolTable.SymbolTable import SymbolTable
-from Structure.SymbolTable.Type import Types, Type
+from Structure.SymbolTable.Type import Types, Type, get_type
 from Temporal import Temporal
 
 
@@ -36,21 +36,7 @@ class FoorLoop(Instruction):
                 else:
                     var_value = i.getValue(driver, ts)
 
-                t = None
-                if type(var_value) == float:
-                    t = Type("FLOAT64")
-                elif type(var_value) == int:
-                    t = Type("INT64")
-                elif type(var_value) == str:
-                    t = Type("STRING")
-                elif type(var_value) == bool:
-                    t = Type("BOOL")
-                elif type(var_value) == list:
-                    t = Type("ARRAY")
-                elif type(var_value) == range:
-                    t = Type("RANGE")
-                else:
-                    t = Type("NOTHING")
+                t = get_type(var_value)
 
                 if ts_local.exist(self.id):
                     ts_local.getSymbol(self.id).setValue(var_value)

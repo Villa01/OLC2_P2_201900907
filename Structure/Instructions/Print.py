@@ -52,6 +52,7 @@ class Print(Instruction):
                     t = Types.STRING
                 elif type(val) == bool:
                     t = Types.BOOL
+            t = ret.type
 
             if t == Types.INT64:
                 tmp.append_code(f'fmt.Printf("%d", int({valor}));\n')
@@ -70,35 +71,37 @@ class Print(Instruction):
                 tmp.imprimir_label(temp_label)
 
             elif t == Types.STRING:
-                # TODO: modificar la concatenacion de strings
-                tmp.new_temp()
-                param_temp = tmp.get_temp()
+                tmp.fPrintString()
 
-                tmp.add_assing(param_temp, tmp.H)
+                param_tmp = tmp.new_temp()
 
-                # tmp.add_exp(param_temp, 'p', 1, '+')
-                # tmp.add_exp(param_temp, param_temp, 1, '+')
-                for letra in valor:
-                    tmp.set_heap(tmp.H, ord(letra))
-                    tmp.add_exp(tmp.H, tmp.H, 1, '+')
-
-                tmp.set_heap(tmp.H, -1)
-
-                # cambio de entorno
-                tmp.new_temp()
-                temp_env = tmp.get_temp()
-                tmp.add_exp(temp_env, tmp.P, symbol_table.size, '+')
-                tmp.add_exp(temp_env, temp_env, 1, '+')
-                tmp.set_stack(temp_env, param_temp)
+                tmp.add_exp(param_tmp, tmp.P, symbol_table.size, '+')
+                tmp.add_exp(param_tmp, param_tmp, '1', '+')
+                tmp.set_stack(param_tmp, valor)
 
                 tmp.new_env(symbol_table.size)
-                tmp.fPrintString()
                 tmp.llamar_func('print_string')
+
+                temp = tmp.new_temp()
+                tmp.get_stack(temp, tmp.P)
                 tmp.ret_env(symbol_table.size)
 
-                tmp.new_temp()
-                temporal = tmp.get_temp()
-                tmp.get_stack(temporal, tmp.P)
+            elif t == Types.NOTHING:
+                value = 'Nothing'
+                tmp.fPrintString()
+
+                param_tmp = tmp.new_temp()
+
+                tmp.add_exp(param_tmp, tmp.P, symbol_table.size, '+')
+                tmp.add_exp(param_tmp, param_tmp, '1', '+')
+                tmp.set_stack(param_tmp, valor)
+
+                tmp.new_env(symbol_table.size)
+                tmp.llamar_func('print_string')
+
+                temp = tmp.new_temp()
+                tmp.get_stack(temp, tmp.P)
+                tmp.ret_env(symbol_table.size)
 
         if self.n:
             tmp.add_print('c', 10)

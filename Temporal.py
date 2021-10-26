@@ -15,6 +15,7 @@ class Temporal:
         # Lista de Nativas
         self.printString = False
         self.potencia = False
+        self.parse = False
 
     def add_comment(self, comment):
         self.append_code(f'/* {comment} */\n')
@@ -42,7 +43,7 @@ class Temporal:
         self.append_code(f'{label}:\n')
 
     def get_header(self):
-        header = '/*----HEADER----*/\npackage main;\n\nimport (\n\t"fmt"\n)\n\n'
+        header = '/*----HEADER----*/\npackage main\n\nimport (\n\t"fmt"\n)\n\n'
         if self.tmp > 0:
             header += 'var '
             cont = 0
@@ -51,7 +52,7 @@ class Temporal:
                 if cont != self.tmp - 1:
                     header += " ,"
                 cont += 1
-            header += " float64; \n"
+            header += " float64 ;\n"
 
         header += f"var {self.P}, {self.H} float64;\nvar stack [30101999]float64;\nvar heap [30101999]float64;\n\n"
 
@@ -76,7 +77,7 @@ class Temporal:
         self.append_code(f'{result}={left}{op}{right};\n')
 
     def add_assing(self, result, exp):
-        self.append_code(f'{result}={exp};\n')
+        self.append_code(f'{result}={exp}\n;')
 
     def add_print(self, t, value):
         self.append_code(f'fmt.Printf("%{t}", {value});\n')
@@ -136,6 +137,26 @@ class Temporal:
 
     def add_goto(self, label):
         self.append_code(f'goto {label};\n')
+
+    def save_string_heap(self, palabra, size):
+        tmp_h = self.new_temp()
+        self.add_exp(tmp_h, self.H, '', '')
+
+        for letra in palabra:
+            self.set_heap(self.H, 'rune(letra)')
+            self.add_exp(self.H, self.H, 1, '+')
+
+        self.set_stack(size, tmp_h)
+
+    def fparse(self):
+        if self.parse:
+            return
+        self.parse = True
+        self.inNatives = True
+
+        self.addBeginFunc('parse')
+
+        return_lbl = self.new_label()
 
     # Funciones Nativas
     def fPrintString(self):

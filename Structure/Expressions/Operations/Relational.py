@@ -219,7 +219,7 @@ class Relational(Operation, Expression):
                 tmp.add_goto(self.false_label)
             else:
                 # Agregar comparacion de cadenas
-                driver.agregarError(f'No se admite la operacion con los tipos definidos', self.line, self.column)
+                driver.agregarError(f'No se admite la operacion con los tipos definidos para la expresion relacional', self.line, self.column)
         else:
             goto_right = tmp.new_label()
             tmp.new_label()
