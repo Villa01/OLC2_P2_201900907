@@ -81,7 +81,9 @@ class Llamada(Instruction, Expression):
             cont = 0
             for param in func.param_list:
                 symbol = self.param_list[cont]
-                t = symbol.getType(driver, symbol_table)
+                ret = symbol.compilar(driver, symbol_table, tmp)
+                t = ret.type
+
                 if t == Types.INT64:
                     t = Type("INT64")
                 elif t == Types.FLOAT64:
@@ -99,7 +101,7 @@ class Llamada(Instruction, Expression):
                 else:
                     t = Type("NOTHING")
                 param.symbol_type = t
-                value = symbol.compilar(driver, symbol_table, tmp).value
+                value = ret.value
                 param.value = value
                 param_values.append(param)
                 symbol_table.add(param.identifier, param)
@@ -117,7 +119,6 @@ class Llamada(Instruction, Expression):
             tmp.llamar_func(self.id)
             tmp.get_stack(temp, tmp.P)
             tmp.ret_env(size)
-
 
             return Return(temp, func.symbol_type, True)
         else:

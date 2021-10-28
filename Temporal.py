@@ -7,6 +7,7 @@ class Temporal:
     def __init__(self) -> None:
         self.code = ''
         self.temporales = []
+        self.imports = ['fmt']
         self.funcs = ''
         self.natives = ''
         self.inFunc = False
@@ -16,9 +17,14 @@ class Temporal:
         self.printString = False
         self.potencia = False
         self.parse = False
+        self.concatenar = False
 
     def add_comment(self, comment):
         self.append_code(f'/* {comment} */\n')
+
+    def add_import(self, imp):
+        if imp not in self.imports:
+            self.imports.append(imp)
 
     # funciones para temporales
 
@@ -43,8 +49,11 @@ class Temporal:
         self.append_code(f'{label}:\n')
 
     def get_header(self):
-        header = '/*----HEADER----*/\npackage main\n\nimport (\n\t"fmt"\n)\n\n'
-        if self.tmp > 0:
+        header = '/*----HEADER----*/\npackage main\n\nimport ('
+        for imp in self.imports:
+            header += f'\n\t"{imp}"'
+        header += '\n)\n\n'
+        if self.tmp >= 0:
             header += 'var '
             cont = 0
             for temp in self.temporales:
@@ -94,6 +103,10 @@ class Temporal:
         self.add_print("c", 108)
         self.add_print("c", 115)
         self.add_print("c", 101)
+
+    def print_cadena(self, palabra):
+        for letra in palabra:
+            self.add_print("c", ord(letra))
 
     def addBeginFunc(self, nombre):
         if not self.inNatives:
@@ -203,6 +216,65 @@ class Temporal:
         self.imprimir_label(return_lbl)
         self.addEndFunc()
 
+        self.inNatives = False
+
+    def fConcatenar(self):
+        if self.concatenar:
+            return
+        self.concatenar = True
+        self.inNatives = True
+
+        self.addBeginFunc('concatenar')
+
+        t1 = self.new_temp()
+        self.add_exp(t1, self.P, '1', '+')
+        t2 = self.new_temp()
+        self.get_stack(t2, t1)
+
+        loop_lbl = self.new_label()
+        self.imprimir_label(loop_lbl)
+        false_lbl = self.new_label()
+
+        true_lbl = self.new_label()
+
+        t3 = self.new_temp()
+        self.get_heap(t3, t2)
+        self.add_if(t3, '!=', '-1', true_lbl)
+        self.add_goto(false_lbl)
+
+        self.imprimir_label(true_lbl)
+        t4 = self.new_temp()
+        self.add_exp(t3, self.P, '3', '+')
+        t5 = self.new_temp()
+        self.get_stack(t5, t4)
+        self.set_heap(t5, t3)
+        self.add_goto(loop_lbl)
+
+        self.imprimir_label(false_lbl)
+
+        t6 = self.new_temp()
+        self.add_exp(t6, self.P, 2, '+')
+        t7 = self.new_temp()
+        self.get_stack(t7, t6)
+        loop_lbl2 = self.new_label()
+        t8 = self.new_label()
+        self.get_heap(t8, t7)
+        true_lbl = self.new_label()
+        false_lbl = self.new_label()
+        self.add_if(t8, '==', -1, true_lbl)
+        self.add_goto(false_lbl)
+
+        self.imprimir_label(true_lbl)
+        t9 = self.new_label()
+        self.add_exp(t9, self.P, 2, '+')
+        t10 = self.new_label()
+        self.get_stack(t10, t9)
+        self.set_heap(t10, t7)
+        self.add_goto(loop_lbl2)
+
+        self.imprimir_label(false_lbl)
+
+        self.addEndFunc()
         self.inNatives = False
 
     def fPotencia(self):

@@ -1,7 +1,11 @@
 import sys
 
 from Structure.AST.Node import Node
+from Structure.Expressions.Identifier import Identifier
+from Structure.Instructions.Llamada import Llamada
 from Structure.Instructions.Transference_structures.Return import Return
+from Structure.SymbolTable.Symbol import Symbol
+from Temporal import Temporal
 
 sys.path.append('../')
 
@@ -155,14 +159,59 @@ class Arithmetic(Operation, Expression):
         else:
             driver.agregarError(f'No se admite la operacion', self.line, self.column)
 
-    def compilar(self, driver, ts, tmp):
+    def compilar(self, driver, ts: SymbolTable, tmp: Temporal):
+
         left_value = self.exp1.compilar(driver, ts, tmp)
-        right_value = self.exp2.compilar(driver, ts, tmp)
+        # Guardar temporales
+        pos = 0
+        if not self.expU:
+            if isinstance(self.exp2, Llamada) and isinstance(self.exp1, Identifier):
+                tmp.add_comment('Guardado de temporales')
+                tmp_g = tmp.new_temp()
+                symbol: Symbol = ts.getSymbol(self.exp1.id)
+                pos = symbol.position
+                tmp.add_exp(tmp_g, tmp.P, symbol.position, '+')
+                tmp.set_stack(tmp_g, left_value.value)
+                tmp.add_comment('Fin guardado de temporales')
+
+        if not self.expU:
+            right_value = self.exp2.compilar(driver, ts, tmp)
+
+        # Recuperar temporales
+        if not self.expU:
+            if isinstance(self.exp2, Llamada) and isinstance(self.exp1, Identifier):
+                tmp.add_comment('Recuperando de temporales')
+                tmp_g = tmp.new_temp()
+                tmp.add_exp(tmp_g, tmp.P, pos, '+')
+                tmp.get_stack(left_value.value, tmp_g)
+                tmp.add_comment('Fin guardado de temporales')
 
         temp = tmp.new_temp()
         op = getStringOperator(self.Operator)
 
         if self.Operator == Operator.POT:
+
+            if left_value.type == Types.STRING and right_value.type == Types.INT64:
+                tmp.fConcatenar()
+                palabra = right_value.value
+
+                h_inicial = tmp.new_temp()
+                tmp.add_exp(h_inicial, tmp.H, '', '')
+
+                for letra in palabra:
+                    tmp.set_heap(tmp.H, ord(letra))
+                    tmp.add_exp(tmp.H, tmp.H, 1, '+')
+
+                tmp_ent = tmp.new_temp()
+                tmp.add_exp(tmp_ent, tmp.P, 0, '+')
+                tmp.add_exp(tmp_ent, tmp_ent, 1, '+')
+                tmp.set_stack(tmp_ent, h_inicial)
+
+                tmp.get_stack(temp, tmp.P)
+
+                return Return(temp, Types.STRING, False)
+
+
             tmp.fPotencia()
             param_temp = tmp.new_temp()
 
@@ -182,7 +231,33 @@ class Arithmetic(Operation, Expression):
 
             return Return(temp, Types.INT64, True)
         else:
-            tmp.add_exp(temp, left_value.value, right_value.value, op)
+            if not self.expU:
+                if op == '/' or op == '%':
+                    fine_lbl = tmp.new_label()
+                    error_lbl = tmp.new_label()
+                    salida = tmp.new_label()
+
+                    tmp.add_if(right_value.value, '!=', 0, fine_lbl)
+                    tmp.add_goto(error_lbl)
+
+                    tmp.imprimir_label(error_lbl)
+                    tmp.print_cadena("Math Error")
+                    tmp.add_exp(temp, 0, '', '')
+                    tmp.add_goto(salida)
+
+                    tmp.imprimir_label(fine_lbl)
+
+                    if op == '%':
+                        tmp.add_exp(temp, f'math.Mod({left_value.value},{right_value.value})', '', '')
+                        tmp.add_import("math")
+                    else:
+                        tmp.add_exp(temp, left_value.value, right_value.value, op)
+
+                    tmp.imprimir_label(salida)
+                else:
+                    tmp.add_exp(temp, left_value.value, right_value.value, op)
+            else:
+                tmp.add_exp(temp, 0, left_value.value, '-')
             return Return(temp, Types.INT64, True)
 
     def traverse(self):

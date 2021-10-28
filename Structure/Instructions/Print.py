@@ -4,7 +4,7 @@ from Structure.Interfaces.Instruction import Instruction
 from Structure.Interfaces.Expression import Expression
 from Structure.Driver import Driver
 from Structure.SymbolTable.SymbolTable import SymbolTable
-from Structure.SymbolTable.Type import Types
+from Structure.SymbolTable.Type import Types, Type
 from Temporal import Temporal
 
 
@@ -39,20 +39,11 @@ class Print(Instruction):
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
         for exp in self.exps:
             ret: Return = exp.compilar(driver, symbol_table, tmp)
-            val = exp.getValue(driver, symbol_table)
-            t = exp.getType(driver, symbol_table)
             valor = ret.value
 
-            if t == Types.NOTHING:
-                if type(val) == int:
-                    t = Types.INT64
-                elif type(val) == float:
-                    t = Types.FLOAT64
-                elif type(val) == str:
-                    t = Types.STRING
-                elif type(val) == bool:
-                    t = Types.BOOL
             t = ret.type
+            if isinstance(t, Type):
+                t = ret.type.type
 
             if t == Types.INT64:
                 tmp.append_code(f'fmt.Printf("%d", int({valor}));\n')
@@ -87,21 +78,7 @@ class Print(Instruction):
                 tmp.ret_env(symbol_table.size)
 
             elif t == Types.NOTHING:
-                value = 'Nothing'
-                tmp.fPrintString()
-
-                param_tmp = tmp.new_temp()
-
-                tmp.add_exp(param_tmp, tmp.P, symbol_table.size, '+')
-                tmp.add_exp(param_tmp, param_tmp, '1', '+')
-                tmp.set_stack(param_tmp, valor)
-
-                tmp.new_env(symbol_table.size)
-                tmp.llamar_func('print_string')
-
-                temp = tmp.new_temp()
-                tmp.get_stack(temp, tmp.P)
-                tmp.ret_env(symbol_table.size)
+                tmp.print_cadena('Nothing')
 
         if self.n:
             tmp.add_print('c', 10)

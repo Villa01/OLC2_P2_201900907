@@ -37,7 +37,7 @@ class Function(Symbol, Instruction):
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
         # self.addFunctionSymbol(driver, symbol_table)
         ts_local = SymbolTable(symbol_table, 'Funcion ' + self.identifier)
-        return_lbl = tmp.new_temp()
+        return_lbl = tmp.new_label()
         ts_local.size = 1
         ts_local.return_lbl = return_lbl
 

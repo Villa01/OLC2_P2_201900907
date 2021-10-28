@@ -1,4 +1,5 @@
 from Structure.AST.Node import Node
+from Structure.Instructions.Transference_structures.Return import Return
 from Structure.SymbolTable.SymbolTable import SymbolTable
 from Structure.Driver import Driver
 from Structure.Interfaces.Instruction import Instruction
@@ -43,6 +44,8 @@ class ReturnStructure(Instruction):
         else:
             tmp.set_stack(tmp.P, value.value)
         tmp.add_goto(symbol_table.return_lbl)
+
+        return Return(value.value, value.type, False)
 
     def traverse(self):
         padre = Node("RETURN", "")

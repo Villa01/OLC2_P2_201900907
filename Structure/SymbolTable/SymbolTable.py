@@ -19,11 +19,11 @@ class SymbolTable:
         self.return_lbl = ''
 
     def add(self, idd: str, symbol: Symbol):
-        symbol.position = self.size
         symbol.in_heap = symbol.symbol_type == Types.STRING or symbol.symbol_type == Types.STRUCT
         symbol.is_global = self.prev is None
-        self.table[idd] = symbol
+        symbol.position = self.size
         self.size += 1
+        self.table[idd] = symbol
 
     def add_func(self, idd: str, symbol: Symbol):
         symbol.position = self.size

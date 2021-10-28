@@ -319,16 +319,15 @@ def p_sent_llamada_p(t):
 
 def p_sent_function(t):
     """
-    sent_function : FUNCTION ID PARA parametros PARC instrucciones END
+    sent_function : FUNCTION ID PARA parametros PARC DOSPTS DOSPTS tipo instrucciones END
     """
-    t[0] = Function(3, Type('NOTHING'), t[2], None, t[4], True, t[6], t.lineno(1), 0)
-
+    t[0] = Function(3, t[8], t[2], None, t[4], True, t[9], t.lineno(1), 0)
 
 def p_sent_function2(t):
     """
-    sent_function : FUNCTION ID PARA PARC instrucciones END
+    sent_function : FUNCTION ID PARA PARC DOSPTS DOSPTS tipo instrucciones END
     """
-    t[0] = Function(3, Type('NOTHING'), t[2], None, [], True, t[5], t.lineno(1), 0)
+    t[0] = Function(3, t[7], t[2], None, [], True, t[8], t.lineno(1), 0)
 
 
 def p_lista_parametros(t):
@@ -346,13 +345,11 @@ def p_lista_parametros_tipo(t):
     t[0] = t[1]
     t[0].append(Symbol(1, t[5], t[3], None, None, False))
 
-
+"""
 def p_parametro(t):
-    """
     parametros : ID
-    """
     t[0] = [Symbol(1, Type('NOTHING'), t[1], None, None, False)]
-
+"""
 
 def p_parametro_t(t):
     """
@@ -559,7 +556,7 @@ def p_tipo(t):
 
 def p_print(t):
     '''
-    print : PRINT PARA lista_expr PARC 
+    print : PRINT PARA lista_expr PARC
     '''
     t[0] = Print(t[3], t.lineno(1), 0, False)
 
@@ -595,7 +592,7 @@ def p_lista_expr_r(t):
 
 def p_lista_expr(t):
     '''
-    lista_expr : expresion 
+    lista_expr : expresion
     '''
     t[0] = []
     t[0].append(t[1])
@@ -662,7 +659,7 @@ def p_expresion_logica(t):
 
 def p_expresion_logica_unario(t):
     '''
-    expresion : NOT expresion 
+    expresion : NOT expresion
     '''
 
     t[0] = Logic(t[2], t[1], None, t.lineno(1), 0, True)
@@ -677,9 +674,9 @@ def p_expresion_primitivas(t):
     '''
     expresion    : ENTERO
                     | DECIMAL
-                    | CADENA       
+                    | CADENA
                     | TRUE
-                    | FALSE   
+                    | FALSE
     '''
     if t[1] == "true":
         t[1] = True
@@ -690,7 +687,7 @@ def p_expresion_primitivas(t):
 
 def p_expresion_array(t):
     '''
-    expresion : CORA lista_expr CORC 
+    expresion : CORA lista_expr CORC
     '''
     t[0] = Primitive(t[2], t.lineno(1), 0)
 
@@ -720,10 +717,10 @@ def p_expresion_nativas(t):
     '''
     expresion : LOG10 PARA expresion PARC
               | LOG PARA expresion COMA expresion PARC
-              | SENO PARA expresion PARC 
-              | COS PARA expresion PARC 
-              | TAN PARA expresion PARC 
-              | SQRT PARA expresion PARC 
+              | SENO PARA expresion PARC
+              | COS PARA expresion PARC
+              | TAN PARA expresion PARC
+              | SQRT PARA expresion PARC
               | LOWERCASE PARA expresion PARC
               | UPPERCASE PARA expresion PARC
               | TRUNC PARA expresion PARC
@@ -731,7 +728,7 @@ def p_expresion_nativas(t):
               | FSTRING PARA expresion PARC
               | TYPEOF PARA expresion PARC
               | PARSE PARA tipo COMA expresion PARC
-              | LENGTH PARA expresion PARC 
+              | LENGTH PARA expresion PARC
               | POP NOT PARA expresion PARC
     '''
 
