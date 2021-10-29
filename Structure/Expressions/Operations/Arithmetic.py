@@ -310,23 +310,31 @@ class Arithmetic(Operation, Expression):
 
                     tmp.imprimir_label(salida)
                 else:
-                    if op == '*' and left_value.type == Types.STRING and right_value.value == Types.STRING:
+                    if op == '*' and left_value.type == Types.STRING and right_value.type == Types.STRING:
                         # Concatenacion de cadenas
+                        tmp.add_comment('Inicio concatencacion')
+
                         tmp_par1 = tmp.new_temp()
                         tmp.add_exp(tmp_par1, tmp.P, 1, '+')
+                        tmp.add_exp(tmp_par1, tmp_par1, ts.size, '+')
                         tmp.set_stack(tmp_par1, left_value.value)
 
                         tmp_par2 = tmp.new_temp()
                         tmp.add_exp(tmp_par2, tmp.P, 2, '+')
+                        tmp.add_exp(tmp_par2, tmp_par2, ts.size, '+')
                         tmp.set_stack(tmp_par2, right_value.value)
 
                         tmp.fConcatenar()
 
                         tmp.new_env(ts.size)
                         tmp.llamar_func('concatenar')
+                        dir_ret = tmp.new_temp()
+                        tmp.add_exp(dir_ret, tmp.P, 0, '+')
                         ret = tmp.new_temp()
-                        tmp.add_exp(ret, tmp.P, 0, '+')
+                        tmp.get_stack(ret, dir_ret)
                         tmp.ret_env(ts.size)
+                        tmp.add_comment('Fin concatencacion')
+                        return Return(ret, Types.STRING, True)
                     else:
                         tmp.add_exp(temp, left_value.value, right_value.value, op)
             else:

@@ -270,12 +270,67 @@ class Temporal:
 
         self.addBeginFunc('concatenar')
 
+        dir_param1 = self.new_temp()
+        self.add_exp(dir_param1, self.P, 1, '+')
+
         tmp_param1 = self.new_temp()
-        self.add_exp(tmp_param1, self.P, 1, '+')
+        self.get_stack(tmp_param1, dir_param1)
 
         res_pos = self.new_temp()
         self.add_exp(res_pos, self.H, '', '')
 
+        lbl_loop1 = self.new_label()
+        self.imprimir_label(lbl_loop1)
+
+        tmp_letra = self.new_temp()
+        self.get_heap(tmp_letra, tmp_param1)
+
+        lbl_true = self.new_label()
+        lbl_false = self.new_label()
+
+        self.add_if(tmp_letra, '!=', '-1', lbl_true)
+        self.add_goto(lbl_false)
+
+        self.imprimir_label(lbl_true)
+
+        self.set_heap(self.H, tmp_letra)
+        self.add_exp(self.H, self.H, 1, '+')
+        self.add_exp(tmp_param1, tmp_param1, 1, '+')
+        self.add_goto(lbl_loop1)
+
+        self.imprimir_label(lbl_false)
+
+        # Segunda palabra
+        dir_param2 = self.new_temp()
+        self.add_exp(dir_param2, self.P, 2, '+')
+
+        tmp_param2 = self.new_temp()
+        self.get_stack(tmp_param2, dir_param2)
+
+        lbl_loop2 = self.new_label()
+        self.imprimir_label(lbl_loop2)
+
+        tmp_letra = self.new_temp()
+        self.get_heap(tmp_letra, tmp_param2)
+
+        lbl_true = self.new_label()
+        lbl_false = self.new_label()
+
+        self.add_if(tmp_letra, '!=', '-1', lbl_true)
+        self.add_goto(lbl_false)
+
+        self.imprimir_label(lbl_true)
+
+        self.set_heap(self.H, tmp_letra)
+        self.add_exp(self.H, self.H, 1, '+')
+        self.add_exp(tmp_param2, tmp_param2, 1, '+')
+        self.add_goto(lbl_loop2)
+
+        self.imprimir_label(lbl_false)
+
+        self.set_heap(self.H, -1)
+
+        self.set_stack(self.P, res_pos)
 
         self.addEndFunc()
         self.inNatives = False
