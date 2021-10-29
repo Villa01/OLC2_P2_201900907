@@ -19,6 +19,8 @@ class Temporal:
         self.parse = False
         self.concatenar = False
         self.sizeString = False
+        self.lowercase = False
+        self.uppercase = False
 
     def add_comment(self, comment):
         self.append_code(f'/* {comment} */\n')
@@ -219,6 +221,64 @@ class Temporal:
 
         self.inNatives = False
 
+    def flowercase(self):
+        if self.lowercase:
+            return
+        self.inNatives = True
+        self.lowercase = True
+
+        self.addBeginFunc('lowercase')
+
+        ret = self.get_temp()
+        self.add_exp(ret, self.H, '', '')
+
+        dir_param = self.new_temp()
+        self.add_exp(dir_param, self.P, '1', '+')
+        tmp_param = self.new_temp()
+        self.get_stack(tmp_param, dir_param)
+
+        loop_lbl = self.new_label()
+        true_lbl = self.new_label()
+        false_lbl = self.new_label()
+
+        self.imprimir_label(loop_lbl)
+
+        tmp_letra = self.new_temp()
+
+        self.get_heap(tmp_letra, tmp_param)
+
+        self.add_if(tmp_letra, '!=', -1, true_lbl)
+        self.add_goto(false_lbl)
+
+        self.imprimir_label(true_lbl)
+
+        minus_lbl = self.new_label()
+        mayus_lbl = self.new_label()
+        salir = self.new_label()
+
+        self.add_if(tmp_letra, '<', 97, mayus_lbl)
+        self.add_goto(minus_lbl)
+
+        self.imprimir_label(mayus_lbl)
+        self.add_exp(tmp_letra, tmp_letra, 32, '+')
+        self.add_goto(salir)
+
+        self.imprimir_label(minus_lbl)
+        self.add_goto(salir)
+
+        self.imprimir_label(salir)
+        self.set_heap(self.H, tmp_letra)
+        self.add_exp(self.H, self.H, 1, '+')
+        self.add_exp(tmp_param, tmp_param, 1, '+')
+        self.add_goto(loop_lbl)
+
+        self.imprimir_label(false_lbl)
+
+        self.set_stack(self.P, ret)
+        self.set_heap(self.H, -1)
+        self.addEndFunc()
+        self.inNatives = False
+
     def fSizeString(self):
         if self.sizeString:
             return
@@ -240,7 +300,6 @@ class Temporal:
         t_letra = self.new_temp()
         self.get_heap(t_letra, t_param)  # t3 = heap[t2]
 
-
         true_lbl = self.new_label()
         false_lbl = self.new_label()
 
@@ -256,7 +315,7 @@ class Temporal:
         self.imprimir_label(true_lbl)  # L3:
 
         ret = self.new_temp()
-        self.add_exp(ret, self.P, 0, '+') # t5 = P + 0
+        self.add_exp(ret, self.P, 0, '+')  # t5 = P + 0
         self.set_stack(self.P, t_cont)
 
         self.addEndFunc()
