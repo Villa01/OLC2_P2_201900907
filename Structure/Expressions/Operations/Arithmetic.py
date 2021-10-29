@@ -192,25 +192,80 @@ class Arithmetic(Operation, Expression):
         if self.Operator == Operator.POT:
 
             if left_value.type == Types.STRING and right_value.type == Types.INT64:
-                tmp.fConcatenar()
-                palabra = right_value.value
 
-                h_inicial = tmp.new_temp()
-                tmp.add_exp(h_inicial, tmp.H, '', '')
+                tmp.add_comment("Inicio repeticion")
+                tmp_palabra = left_value.value
+                # Obtener tamaño del string
 
-                for letra in palabra:
-                    tmp.set_heap(tmp.H, ord(letra))
-                    tmp.add_exp(tmp.H, tmp.H, 1, '+')
+                tmp.fSizeString()
+                tmp_param = tmp.new_temp()
+                tmp.add_exp(tmp_param, tmp.P, ts.size + 1, '+')
+                tmp.set_stack(tmp_param, tmp_palabra)
 
-                tmp_ent = tmp.new_temp()
-                tmp.add_exp(tmp_ent, tmp.P, 0, '+')
-                tmp.add_exp(tmp_ent, tmp_ent, 1, '+')
-                tmp.set_stack(tmp_ent, h_inicial)
+                tmp.new_env(ts.size)
+                tmp.llamar_func('sizeString')
+                tmp_size = tmp.new_temp()
+                tmp.get_stack(tmp_size, tmp.P)
+                tmp.ret_env(ts.size)
 
-                tmp.get_stack(temp, tmp.P)
+                tmp_cont = tmp.new_temp()
 
-                return Return(temp, Types.STRING, False)
+                tmp_apunt = tmp.new_temp()
+                tmp.add_exp(tmp_apunt, tmp_palabra, '', '')
 
+                tmp_iter = tmp.new_temp()
+                tmp.add_exp(tmp_iter, 0, '', '')
+
+                true_iter_lbl = tmp.new_label()
+                false_iter_lbl = tmp.new_label()
+
+                lbl_iter = tmp.new_label()
+                tmp.imprimir_label(lbl_iter)
+
+                tmp.add_exp(tmp_cont, 0, '', '')    # t1 = 0
+
+                tmp_comp = tmp.new_temp()
+                tmp.add_exp(tmp_comp, right_value.value, 1, '-')
+                tmp.add_if(tmp_iter, '<', tmp_comp, true_iter_lbl)
+                tmp.add_goto(false_iter_lbl)
+
+                tmp.imprimir_label(true_iter_lbl)
+
+                tmp_cont_pal = tmp.new_temp()
+                tmp.add_exp(tmp_cont_pal, tmp_palabra, '', '')   # t_cont_pal = t_pal
+                tmp.add_exp(tmp_apunt, tmp_apunt, tmp_size, '+')
+
+                lbl_loop = tmp.new_label()
+                tmp.imprimir_label(lbl_loop)  # L1:
+
+                true_lbl = tmp.new_label()
+                false_lbl = tmp.new_label()
+
+                tmp.add_if(tmp_cont, '<', tmp_size, true_lbl)  # if t1 < t0 {goto L2;}
+                tmp.add_goto(false_lbl)     # goto L3;
+
+                tmp.imprimir_label(true_lbl)    # L2:
+
+                tmp_val = tmp.new_temp()
+                tmp.get_heap(tmp_val, tmp_cont_pal)     # t_val = heap[t_cont_pal]
+
+                tmp.set_heap(tmp_apunt, tmp_val)    # heap[t_apunt] = t_val
+
+                tmp.add_exp(tmp_apunt, tmp_apunt, 1, '+')   # t_apunt = t_apunt + 1
+                tmp.add_exp(tmp_cont, tmp_cont, 1, '+')     # t_cont = t_cont + 1
+                tmp.add_exp(tmp_cont_pal, tmp_cont_pal, 1, '+')     # t_cont = t_cont + 1
+
+                tmp.add_goto(lbl_loop)
+
+                tmp.imprimir_label(false_lbl)
+                tmp.add_exp(tmp_iter, tmp_iter, 1, '+')
+                tmp.add_goto(lbl_iter)
+                tmp.imprimir_label(false_iter_lbl)
+
+                tmp.set_heap(tmp_apunt, -1)
+
+                tmp.add_comment("Fin repeticion")
+                return Return(tmp_palabra, Types.STRING, True)
 
             tmp.fPotencia()
             param_temp = tmp.new_temp()
@@ -255,7 +310,25 @@ class Arithmetic(Operation, Expression):
 
                     tmp.imprimir_label(salida)
                 else:
-                    tmp.add_exp(temp, left_value.value, right_value.value, op)
+                    if op == '*' and left_value.type == Types.STRING and right_value.value == Types.STRING:
+                        # Concatenacion de cadenas
+                        tmp_par1 = tmp.new_temp()
+                        tmp.add_exp(tmp_par1, tmp.P, 1, '+')
+                        tmp.set_stack(tmp_par1, left_value.value)
+
+                        tmp_par2 = tmp.new_temp()
+                        tmp.add_exp(tmp_par2, tmp.P, 2, '+')
+                        tmp.set_stack(tmp_par2, right_value.value)
+
+                        tmp.fConcatenar()
+
+                        tmp.new_env(ts.size)
+                        tmp.llamar_func('concatenar')
+                        ret = tmp.new_temp()
+                        tmp.add_exp(ret, tmp.P, 0, '+')
+                        tmp.ret_env(ts.size)
+                    else:
+                        tmp.add_exp(temp, left_value.value, right_value.value, op)
             else:
                 tmp.add_exp(temp, 0, left_value.value, '-')
             return Return(temp, Types.INT64, True)

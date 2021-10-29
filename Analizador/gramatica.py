@@ -27,7 +27,7 @@ reserved = {
     'Float64': 'FLOAT64',
     'Bool': 'BOOL',
     'Char': 'CHAR',
-    'nothing': 'NOTHING',
+    'Nothing': 'NOTHING',
     'parse': 'PARSE',
     'trunc': 'TRUNC',
     'float': 'FLOAT',

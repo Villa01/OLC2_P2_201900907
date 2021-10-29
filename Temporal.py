@@ -18,6 +18,7 @@ class Temporal:
         self.potencia = False
         self.parse = False
         self.concatenar = False
+        self.sizeString = False
 
     def add_comment(self, comment):
         self.append_code(f'/* {comment} */\n')
@@ -218,6 +219,49 @@ class Temporal:
 
         self.inNatives = False
 
+    def fSizeString(self):
+        if self.sizeString:
+            return
+        self.inNatives = True
+        self.sizeString = True
+
+        self.addBeginFunc('sizeString')
+
+        t = self.new_temp()
+        self.add_exp(t, self.P, 1, '+')  # t1 = P + 1
+        t_param = self.new_temp()
+        self.get_stack(t_param, t)  # t2 = stack[t1]
+        t_cont = self.new_temp()
+        self.add_exp(t_cont, 0, '', '')  # t4 = 0
+
+        lbl_loop = self.new_label()
+        self.imprimir_label(lbl_loop)  # L1:
+
+        t_letra = self.new_temp()
+        self.get_heap(t_letra, t_param)  # t3 = heap[t2]
+
+
+        true_lbl = self.new_label()
+        false_lbl = self.new_label()
+
+        self.add_if(t_letra, '==', -1, true_lbl)  # if t3 == -1 {goto L2;}
+        self.add_goto(false_lbl)  # goto L3;
+
+        self.imprimir_label(false_lbl)  # L3:
+
+        self.add_exp(t_cont, t_cont, 1, '+')  # t4 = t4 + 1
+        self.add_exp(t_param, t_param, 1, '+')  # t2 = t2 + 1
+        self.add_goto(lbl_loop)  # goto L1;
+
+        self.imprimir_label(true_lbl)  # L3:
+
+        ret = self.new_temp()
+        self.add_exp(ret, self.P, 0, '+') # t5 = P + 0
+        self.set_stack(self.P, t_cont)
+
+        self.addEndFunc()
+        self.inNatives = False
+
     def fConcatenar(self):
         if self.concatenar:
             return
@@ -226,53 +270,12 @@ class Temporal:
 
         self.addBeginFunc('concatenar')
 
-        t1 = self.new_temp()
-        self.add_exp(t1, self.P, '1', '+')
-        t2 = self.new_temp()
-        self.get_stack(t2, t1)
+        tmp_param1 = self.new_temp()
+        self.add_exp(tmp_param1, self.P, 1, '+')
 
-        loop_lbl = self.new_label()
-        self.imprimir_label(loop_lbl)
-        false_lbl = self.new_label()
+        res_pos = self.new_temp()
+        self.add_exp(res_pos, self.H, '', '')
 
-        true_lbl = self.new_label()
-
-        t3 = self.new_temp()
-        self.get_heap(t3, t2)
-        self.add_if(t3, '!=', '-1', true_lbl)
-        self.add_goto(false_lbl)
-
-        self.imprimir_label(true_lbl)
-        t4 = self.new_temp()
-        self.add_exp(t3, self.P, '3', '+')
-        t5 = self.new_temp()
-        self.get_stack(t5, t4)
-        self.set_heap(t5, t3)
-        self.add_goto(loop_lbl)
-
-        self.imprimir_label(false_lbl)
-
-        t6 = self.new_temp()
-        self.add_exp(t6, self.P, 2, '+')
-        t7 = self.new_temp()
-        self.get_stack(t7, t6)
-        loop_lbl2 = self.new_label()
-        t8 = self.new_label()
-        self.get_heap(t8, t7)
-        true_lbl = self.new_label()
-        false_lbl = self.new_label()
-        self.add_if(t8, '==', -1, true_lbl)
-        self.add_goto(false_lbl)
-
-        self.imprimir_label(true_lbl)
-        t9 = self.new_label()
-        self.add_exp(t9, self.P, 2, '+')
-        t10 = self.new_label()
-        self.get_stack(t10, t9)
-        self.set_heap(t10, t7)
-        self.add_goto(loop_lbl2)
-
-        self.imprimir_label(false_lbl)
 
         self.addEndFunc()
         self.inNatives = False
