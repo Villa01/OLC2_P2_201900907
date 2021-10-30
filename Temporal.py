@@ -279,6 +279,64 @@ class Temporal:
         self.addEndFunc()
         self.inNatives = False
 
+    def fupperacse(self):
+        if self.uppercase:
+            return
+        self.inNatives = True
+        self.uppercase = True
+
+        self.addBeginFunc('uppercase')
+
+        ret = self.get_temp()
+        self.add_exp(ret, self.H, '', '')
+
+        dir_param = self.new_temp()
+        self.add_exp(dir_param, self.P, '1', '+')
+        tmp_param = self.new_temp()
+        self.get_stack(tmp_param, dir_param)
+
+        loop_lbl = self.new_label()
+        true_lbl = self.new_label()
+        false_lbl = self.new_label()
+
+        self.imprimir_label(loop_lbl)
+
+        tmp_letra = self.new_temp()
+
+        self.get_heap(tmp_letra, tmp_param)
+
+        self.add_if(tmp_letra, '!=', -1, true_lbl)
+        self.add_goto(false_lbl)
+
+        self.imprimir_label(true_lbl)
+
+        minus_lbl = self.new_label()
+        mayus_lbl = self.new_label()
+        salir = self.new_label()
+
+        self.add_if(tmp_letra, '>', 96, mayus_lbl)
+        self.add_goto(minus_lbl)
+
+        self.imprimir_label(mayus_lbl)
+        self.add_exp(tmp_letra, tmp_letra, 32, '-')
+        self.add_goto(salir)
+
+        self.imprimir_label(minus_lbl)
+        self.add_goto(salir)
+
+        self.imprimir_label(salir)
+        self.set_heap(self.H, tmp_letra)
+        self.add_exp(self.H, self.H, 1, '+')
+        self.add_exp(tmp_param, tmp_param, 1, '+')
+        self.add_goto(loop_lbl)
+
+        self.imprimir_label(false_lbl)
+
+        self.set_stack(self.P, ret)
+        self.set_heap(self.H, -1)
+        self.addEndFunc()
+        self.inNatives = False
+
     def fSizeString(self):
         if self.sizeString:
             return
