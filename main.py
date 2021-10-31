@@ -2,6 +2,7 @@ from flask import Flask, json, request
 from flask.templating import render_template
 from flask_cors import CORS
 from Analizador.gramatica import parser
+from Analizador.Optimizacion import parser2
 from Structure.SymbolTable.SymbolTable import SymbolTable
 from Structure.Driver import Driver
 from Temporal import Temporal
@@ -59,6 +60,29 @@ def compilar():
         "text": driver.console
     }
     return json.jsonify(resp)
+
+
+@app.route('/mirilla', methods=['POST'])
+def mirilla():
+    try:
+        data = request.get_json(force=True)
+        input = data["text"]
+
+        instructions = parser2.parse(input)
+
+        instructions.Mirilla()
+
+        output = instructions.getCode()
+
+        resp = {
+            "text": output
+        }
+        return resp
+    except:
+        resp = {
+            "text": input
+        }
+        return resp
 
 
 def reportes(ast, driver, symbol_table):
