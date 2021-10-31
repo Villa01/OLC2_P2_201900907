@@ -9,4 +9,4 @@ class Print(C3DInstruction):
         self.exp = exp
 
     def getCode(self):
-        return f'fmt.Printf({self.strTo}, int({self.exp.getCode()}));'
+        return f'fmt.Printf("{self.strTo}", int({self.exp.getCode()}));'

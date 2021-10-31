@@ -52,10 +52,10 @@ class Temporal:
         self.append_code(f'{label}:\n')
 
     def get_header(self):
-        header = '/*----HEADER----*/\npackage main\n\nimport ('
+        header = '/*----HEADER----*/\npackage main;\n\nimport ('
         for imp in self.imports:
             header += f'\n\t"{imp}"'
-        header += '\n)\n\n'
+        header += '\n);\n\n'
         if self.tmp >= 0:
             header += 'var '
             cont = 0

@@ -2,7 +2,7 @@
 # analizador léxico
 #
 
-import Analizador.ply.lex as lex
+import Analizador.Compilar.ply.lex as lex
 from Structure.Expressions.Operations.Native.Pop import Pop
 from Structure.Expressions.Operations.Native.Push import Push
 from Structure.Instructions.Functions import Function
@@ -177,10 +177,10 @@ lexer = lex.lex()
 #
 
 # imports
-import Analizador.ply.yacc as yacc
+import Analizador.Compilar.ply.yacc as yacc
 import sys
 
-sys.path.append('../')
+sys.path.append('../../')
 
 from Structure.Expressions.Operations.Arithmetic import Arithmetic
 from Structure.Expressions.Operations.Relational import Relational

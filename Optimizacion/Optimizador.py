@@ -1,3 +1,8 @@
+from Optimizacion.Expresiones.Expresion import Expression
+from Optimizacion.Gotos.Goto import Goto
+from Optimizacion.Gotos.If import If
+from Optimizacion.Instructions.Asignacion import Assignment
+
 
 class Optimizador:
 
@@ -64,9 +69,9 @@ class Optimizador:
         for i in range(len(array)):
             actual = array[i]
             # Si la instruccion es una Asignacion
-            if type(actual) is Assignment and not actual.deleted:
+            if type(actual) is Assignment and not actual.deleted and isinstance(actual.exp, Expression):
                 # Si se esta asignando a si mismo
-                if (actual.selfAssignment()):
+                if actual.selfAssignment():
                     actualOpt = actual.exp.neutralOps()
                     if actualOpt:
                         ret = True

@@ -1,12 +1,14 @@
 from flask import Flask, json, request
 from flask.templating import render_template
 from flask_cors import CORS
-from Analizador.gramatica import parser
-from Analizador.Optimizacion import parser2
 from Structure.SymbolTable.SymbolTable import SymbolTable
 from Structure.Driver import Driver
 from Temporal import Temporal
 import pydot
+
+
+from Analizador.Compilar import gramatica
+from Analizador.Optimizacion import Optimizacion
 
 app = Flask(__name__)
 CORS(app)
@@ -23,7 +25,7 @@ def start():
 
     input = data["text"]
     # obtener ruta
-    ast = parser.parse(input)
+    ast = gramatica.parser.parse(input)
 
     symbol_table = SymbolTable(None, 'Global')
     driver = Driver()
@@ -48,7 +50,7 @@ def compilar():
     data = request.get_json(force=True)
     input = data["text"]
 
-    ast = parser.parse(input)
+    ast = gramatica.parser.parse(input)
 
     symbol_table = SymbolTable(None, 'Global')
     driver = Driver()
@@ -64,18 +66,29 @@ def compilar():
 
 @app.route('/mirilla', methods=['POST'])
 def mirilla():
+    data = request.get_json(force=True)
+    input = data["text"]
+
+    instructions = Optimizacion.parser2.parse(input)
+
+    instructions.Mirilla()
+
+    output = instructions.getCode()
+
+    resp = {
+        "text": output
+    }
+    return resp
+
+
+@app.route('/bloques', methods=['POST'])
+def bloques():
     try:
         data = request.get_json(force=True)
         input = data["text"]
 
-        instructions = parser2.parse(input)
-
-        instructions.Mirilla()
-
-        output = instructions.getCode()
-
         resp = {
-            "text": output
+            "text": input
         }
         return resp
     except:

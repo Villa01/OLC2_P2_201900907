@@ -9,4 +9,4 @@ class If(C3DInstruction):
         self.label = label
 
     def getCode(self):
-        return f'if ({self.condition.getCode()}) {{ goto {self.label}; }}'
+        return f'if {self.condition.getCode()} {{ goto {self.label}; }}'

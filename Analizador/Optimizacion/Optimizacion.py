@@ -139,7 +139,7 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-import ply.lex as lex
+import Analizador.Optimizacion.ply.lex as lex
 
 lexer1 = lex.lex()
 
@@ -323,10 +323,10 @@ def p_error(t):
     print("Syntactic error in '%s'" % t.value)
 
 
-import ply.yacc as yacc
+import Analizador.Optimizacion.ply.yacc as yacc
 
-parser2 = yacc.yacc()
-
-
+parser2 = yacc.yacc(debug=True)
+"""
 def parse(input):
     return parser2.parse(input, lexer=lexer1)
+"""
