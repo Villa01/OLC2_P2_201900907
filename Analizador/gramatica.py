@@ -48,7 +48,8 @@ reserved = {
     'function': 'FUNCTION',
     'return': 'RETURN',
     'pop': 'POP',
-    'push': 'PUSH'
+    'push': 'PUSH',
+    'Array': 'ARRAY'
 }
 
 # lista del los nombres de los tokens
@@ -553,6 +554,7 @@ def p_tipo(t):
         | NOTHING
         | BOOL
         | CHAR
+        | ARRAY
     """
     t[0] = Type(t[1].upper())
 

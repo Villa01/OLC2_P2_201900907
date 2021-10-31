@@ -288,6 +288,10 @@ class Arithmetic(Operation, Expression):
         else:
             if not self.expU:
                 if op == '/' or op == '%':
+                    try:
+                        right_value.value = float(right_value.value)
+                    except:
+                        pass
                     fine_lbl = tmp.new_label()
                     error_lbl = tmp.new_label()
                     salida = tmp.new_label()

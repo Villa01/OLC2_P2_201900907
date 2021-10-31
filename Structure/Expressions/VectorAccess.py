@@ -74,6 +74,8 @@ class VectorAccess(Expression):
                 cont += 1
 
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
+        if symbol_table.return_lbl == '':
+            symbol_table.return_lbl = tmp.new_label()
         tmp.add_comment("Inicio acceso a vector")
         var = symbol_table.getSymbol(self.id)
         cont = 0
@@ -102,20 +104,36 @@ class VectorAccess(Expression):
 
             pos_valor = tmp.new_temp()
             tmp.add_exp(pos_valor, pos_heap, ind_val.value, '+')
-            tmp.add_exp(pos_valor, pos_valor, 1, '+')
 
-            # TODO: verificacion dinamica
+            # Verificacion Dinamica
+            true_lbl = tmp.new_label()
+            false_lbl = tmp.new_label()
+            temp = tmp.new_temp()
+            tmp.get_heap(temp, pos_heap)
+            tmp.add_if(ind_val.value, '>=', temp, true_lbl)
+            tmp.add_goto(false_lbl)
+
+            tmp.imprimir_label(true_lbl)
+            tmp.print_cadena("Index out of bounds")
+            tmp.add_goto(symbol_table.return_lbl)
+
+            tmp.imprimir_label(false_lbl)
+
+            tmp.add_exp(pos_valor, pos_valor, 1, '+')
 
             if cont == len(self.indexes):
                 valor = pos_valor
                 tmp.get_heap(pos_valor, valor)
 
+                tmp.imprimir_label(symbol_table.return_lbl)
                 tmp.add_comment("Fin acceso vector")
+
                 return Return(valor, t, True)
             else:
                 temp = tmp.new_temp()
                 tmp.get_heap(temp, pos_valor)
                 temp_pos = temp
+
 
     def traverse(self):
         padre = Node("VECTOR", "")
