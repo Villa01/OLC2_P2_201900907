@@ -7,6 +7,9 @@ class Literal(C3DInstruction):
         C3DInstruction.__init__(self, line, column)
         self.value = value
         self.constant = constant
+        self.deleted = False
 
     def getCode(self):
+        if self.deleted:
+            return ''
         return str(self.value)
