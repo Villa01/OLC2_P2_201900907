@@ -80,7 +80,9 @@ class Asignation(Instruction):
             symbol_table.add(self.id, Symbol(1, self.type, self.id, val.value, None, False))
 
         new_var = symbol_table.getSymbol(self.id)
-        new_var.symbol_type = val.type
+
+        if not val.type == Types.ARRAY:
+            new_var.symbol_type = val.type
 
         tmp_pos = new_var.position
         if not new_var.is_global:

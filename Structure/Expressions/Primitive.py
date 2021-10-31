@@ -68,8 +68,21 @@ class Primitive(Expression):
             tmp.set_heap(tmp.H, '-1')
             tmp.aumentar_heap()
             return Return(ret_temp, Types.STRING, True)
+
+        elif exp_type == Types.ARRAY:
+            ret = tmp.new_temp()
+            tmp.add_exp(ret, tmp.H, '', '')
+            cont = tmp.new_temp()
+            tmp.add_exp(cont, ret, 1, '+')
+            tmp.set_heap(tmp.H, len(exp_value))  # guardar el tamaño del arreglo
+            tmp.add_exp(tmp.H, tmp.H, len(exp_value)+1, '+')
+            for e in exp_value:
+                val = e.compilar(driver, st, tmp)
+                tmp.set_heap(cont, val.value)
+                tmp.add_exp(cont, cont, 1, '+')
+
+            return Return(ret, Types.ARRAY, True)
         else:
-            # TODO: agregar tipos necesarios
             pass
 
     def traverse(self):

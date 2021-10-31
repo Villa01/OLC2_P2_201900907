@@ -323,6 +323,7 @@ def p_sent_function(t):
     """
     t[0] = Function(3, t[8], t[2], None, t[4], True, t[9], t.lineno(1), 0)
 
+
 def p_sent_function2(t):
     """
     sent_function : FUNCTION ID PARA PARC DOSPTS DOSPTS tipo instrucciones END
@@ -345,11 +346,13 @@ def p_lista_parametros_tipo(t):
     t[0] = t[1]
     t[0].append(Symbol(1, t[5], t[3], None, None, False))
 
+
 """
 def p_parametro(t):
     parametros : ID
     t[0] = [Symbol(1, Type('NOTHING'), t[1], None, None, False)]
 """
+
 
 def p_parametro_t(t):
     """
@@ -391,114 +394,114 @@ def p_sent_continue(t):
 
 
 def p_sent_for_(t):
-    '''
+    """
     sent_for : FOR ID IN expresion instrucciones END
-    '''
+    """
     t[0] = FoorLoop(t[2], t[4], t[5], t.lineno(1), 0)
 
 
 def p_sent_while(t):
-    '''
+    """
     sent_while : WHILE expresion instrucciones END
-    '''
+    """
     t[0] = WhileLoop(t[2], t[3], t.lineno(1), 0)
 
 
 def p_sent_while_par(t):
-    '''
+    """
     sent_while : WHILE PARA expresion PARC instrucciones END
-    '''
+    """
     t[0] = WhileLoop(t[3], t[5], t.lineno(1), 0)
 
 
 def p_sent_if(t):
-    '''
+    """
     sent_if : IF expresion instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[2], t[3], [], t.lineno(1), 0)
 
 
 def p_sent_if_par(t):
-    '''
+    """
     sent_if : IF PARA expresion PARC instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[3], t[5], [], t.lineno(1), 0)
 
 
 def p_sent_if_else(t):
-    '''
+    """
     sent_if : IF expresion instrucciones ELSE instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[2], t[3], t[5], t.lineno(1), 0)
 
 
 def p_sent_if_else_par(t):
-    '''
+    """
     sent_if : IF PARA expresion PARC instrucciones ELSE instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[3], t[5], t[7], t.lineno(1), 0)
 
 
 def p_sent_if_elseif(t):
-    '''
+    """
     sent_if : IF expresion instrucciones else_if
-    '''
+    """
     t[0] = IfStructure(t[2], t[3], [t[4]], t.lineno(1), 0)
 
 
 def p_sent_if_elseif_par(t):
-    '''
+    """
     sent_if : IF PARA expresion PARC instrucciones else_if
-    '''
+    """
     t[0] = IfStructure(t[3], t[5], [t[6]], t.lineno(1), 0)
 
 
 def p_elseif_end(t):
-    '''
+    """
     else_if : ELSEIF expresion instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[2], t[3], [], t.lineno(1), 0)
 
 
 def p_elseif_end_par(t):
-    '''
+    """
     else_if : ELSEIF PARA expresion PARC instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[3], t[5], [], t.lineno(1), 0)
 
 
 def p_elseif(t):
-    '''
+    """
     else_if : ELSEIF expresion instrucciones else_if
-    '''
+    """
     t[0] = IfStructure(t[2], t[3], [t[4]], t.lineno(1), 0)
 
 
 def p_elseif_par(t):
-    '''
+    """
     else_if : ELSEIF PARA expresion PARC instrucciones else_if
-    '''
+    """
     t[0] = IfStructure(t[3], t[5], [t[6]], t.lineno(1), 0)
 
 
 def p_elseif_else(t):
-    '''
+    """
     else_if : ELSEIF expresion instrucciones ELSE instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[2], t[3], t[5], t.lineno(1), 0)
 
 
 def p_elseif_else_par(t):
-    '''
+    """
     else_if : ELSEIF PARA expresion PARC instrucciones ELSE instrucciones END
-    '''
+    """
     t[0] = IfStructure(t[3], t[5], t[7], t.lineno(1), 0)
 
 
 def p_asignacion_tipo(t):
-    '''
+    """
     asignacion : ID IGUAL expresion DOSPTS DOSPTS tipo
-    '''
+    """
     t[0] = Asignation(t[1],
                       Symbol(1, t[6], t[1], t[3], None, False),
                       t[6],
@@ -507,10 +510,10 @@ def p_asignacion_tipo(t):
 
 
 def p_asignacion_tipo_g(t):
-    '''
+    """
     asignacion  : GLOBAL ID IGUAL expresion DOSPTS DOSPTS tipo
                 | LOCAL ID IGUAL expresion DOSPTS DOSPTS tipo
-    '''
+    """
     t[0] = Asignation(t[2],
                       Symbol(1, t[7], t[2], t[4], None, False),
                       t[7],
@@ -519,9 +522,9 @@ def p_asignacion_tipo_g(t):
 
 
 def p_asignacion(t):
-    '''
+    """
     asignacion : ID IGUAL expresion
-    '''
+    """
     t[0] = Asignation(t[1],
                       Symbol(1, None, t[1], t[3], None, False),
                       None,
@@ -530,10 +533,10 @@ def p_asignacion(t):
 
 
 def p_asignacion_2(t):
-    '''
+    """
     asignacion : GLOBAL ID IGUAL expresion
                 | LOCAL ID IGUAL expresion
-    '''
+    """
 
     t[0] = Asignation(t[2],
                       Symbol(1, None, t[2], t[4], None, False),
@@ -543,141 +546,141 @@ def p_asignacion_2(t):
 
 
 def p_tipo(t):
-    '''
+    """
     tipo : INT64
         | FLOAT64
         | STRING
         | NOTHING
         | BOOL
         | CHAR
-    '''
+    """
     t[0] = Type(t[1].upper())
 
 
 def p_print(t):
-    '''
+    """
     print : PRINT PARA lista_expr PARC
-    '''
+    """
     t[0] = Print(t[3], t.lineno(1), 0, False)
 
 
 def p_print_vacio(t):
-    '''
+    """
     println : PRINT PARA PARC
-    '''
+    """
     t[0] = Print([], t.lineno(1), 0, False)
 
 
 def p_println_vacio(t):
-    '''
+    """
     println : PRINTLN PARA PARC
-    '''
+    """
     t[0] = Print([], t.lineno(1), 0, True)
 
 
 def p_println(t):
-    '''
+    """
     println : PRINTLN PARA lista_expr PARC
-    '''
+    """
     t[0] = Print(t[3], t.lineno(1), 0, True)
 
 
 def p_lista_expr_r(t):
-    '''
+    """
     lista_expr : lista_expr COMA expresion
-    '''
+    """
     t[0] = t[1]
     t[0].append(t[3])
 
 
 def p_lista_expr(t):
-    '''
+    """
     lista_expr : expresion
-    '''
+    """
     t[0] = []
     t[0].append(t[1])
 
 
 def p_expresion_binaria(t):
-    '''expresion : expresion MAS expresion
+    """expresion : expresion MAS expresion
                   | expresion MENOS expresion
                   | expresion POR expresion
                   | expresion DIVIDIDO expresion
                   | expresion MOD expresion
                   | expresion POT expresion
-    '''
+    """
     t[0] = Arithmetic(t[1], t[2], t[3], t.lineno(1), 0, False)
 
 
 def p_expresion_vector(t):
-    '''
+    """
     expresion : ID list_vector
-    '''
+    """
     t[0] = VectorAccess(t[1], t[2], t.lineno(1), 0)
 
 
 def p_expresion_vector_list(t):
-    '''
+    """
     list_vector : list_vector CORA expresion CORC
-    '''
+    """
     t[0] = t[1]
     t[0].append(t[3])
 
 
 def p_expresion_pos_vector(t):
-    '''
+    """
     list_vector : CORA expresion CORC
-    '''
+    """
     t[0] = []
     t[0].append(t[2])
 
 
 def p_expresion_unaria(t):
-    'expresion : MENOS expresion %prec UNARIA'
+    """expresion : MENOS expresion %prec UNARIA"""
     t[0] = Arithmetic(t[2], 'UNARIO', None, t.lineno(1), 0, True)
 
 
 def p_expresion_relacional(t):
-    '''
+    """
     expresion : expresion MENORIGUAL expresion
                   | expresion MAYORIGUAL expresion
                   | expresion MENORQUE expresion
                   | expresion MAYORQUE expresion
                   | expresion DIFF expresion
                   | expresion IGUALIGUAL expresion
-    '''
+    """
     t[0] = Relational(t[1], t[2], t[3], t.lineno(1), 0, False)
 
 
 def p_expresion_logica(t):
-    '''
+    """
     expresion : expresion AND expresion
                 | expresion OR expresion
-    '''
+    """
     t[0] = Logic(t[1], t[2], t[3], t.lineno(1), 0, False)
 
 
 def p_expresion_logica_unario(t):
-    '''
+    """
     expresion : NOT expresion
-    '''
+    """
 
     t[0] = Logic(t[2], t[1], None, t.lineno(1), 0, True)
 
 
 def p_expresion_agrupacion(t):
-    'expresion : PARA expresion PARC'
+    """expresion : PARA expresion PARC"""
     t[0] = t[2]
 
 
 def p_expresion_primitivas(t):
-    '''
+    """
     expresion    : ENTERO
                     | DECIMAL
                     | CADENA
                     | TRUE
                     | FALSE
-    '''
+    """
     if t[1] == "true":
         t[1] = True
     elif t[1] == "false":
@@ -686,35 +689,35 @@ def p_expresion_primitivas(t):
 
 
 def p_expresion_array(t):
-    '''
+    """
     expresion : CORA lista_expr CORC
-    '''
+    """
     t[0] = Primitive(t[2], t.lineno(1), 0)
 
 
 def p_expresion_range(t):
-    '''
+    """
     expresion : expresion DOSPTS expresion
-    '''
+    """
     t[0] = TypeRange(t[1], t[3], t.lineno(1), 0)
 
 
 def p_expresion_llamada(t):
-    '''
+    """
     expresion : sent_llamada
-    '''
+    """
     t[0] = t[1]
 
 
 def p_expresion_id(t):
-    '''
+    """
     expresion : ID
-    '''
+    """
     t[0] = Identifier(t[1], t.lineno(1), 0)
 
 
 def p_expresion_nativas(t):
-    '''
+    """
     expresion : LOG10 PARA expresion PARC
               | LOG PARA expresion COMA expresion PARC
               | SENO PARA expresion PARC
@@ -730,7 +733,7 @@ def p_expresion_nativas(t):
               | PARSE PARA tipo COMA expresion PARC
               | LENGTH PARA expresion PARC
               | POP NOT PARA expresion PARC
-    '''
+    """
 
     if t[1] == 'log10':
         t[0] = Logarithm(
