@@ -162,6 +162,10 @@ class Arithmetic(Operation, Expression):
     def compilar(self, driver, ts: SymbolTable, tmp: Temporal):
 
         left_value = self.exp1.compilar(driver, ts, tmp)
+
+        if left_value is None:
+            driver.agregarError(f'No es posible resolver el valor del operando ', self.line, self.column)
+            return
         # Guardar temporales
         pos = 0
         if not self.expU:
@@ -176,6 +180,11 @@ class Arithmetic(Operation, Expression):
 
         if not self.expU:
             right_value = self.exp2.compilar(driver, ts, tmp)
+            if right_value is None:
+                driver.agregarError(f'No es posible resolver el valor del operando ', self.line,
+                                    self.column)
+                return
+
 
         # Recuperar temporales
         if not self.expU:
@@ -292,6 +301,10 @@ class Arithmetic(Operation, Expression):
                         right_value.value = float(right_value.value)
                     except:
                         pass
+
+                    if right_value is None:
+                        driver.agregarError(f'No es posible resolver el valor del operando ', self.line, self.column)
+                        return
                     fine_lbl = tmp.new_label()
                     error_lbl = tmp.new_label()
                     salida = tmp.new_label()
@@ -315,6 +328,10 @@ class Arithmetic(Operation, Expression):
                     tmp.imprimir_label(salida)
                 else:
                     if op == '*' and left_value.type == Types.STRING and right_value.type == Types.STRING:
+                        if right_value is None:
+                            driver.agregarError(f'No es posible resolver el valor del operando ', self.line,
+                                                self.column)
+                            return
                         # Concatenacion de cadenas
                         tmp.add_comment('Inicio concatencacion')
 
@@ -340,6 +357,10 @@ class Arithmetic(Operation, Expression):
                         tmp.add_comment('Fin concatencacion')
                         return Return(ret, Types.STRING, True)
                     else:
+                        if right_value is None:
+                            driver.agregarError(f'No es posible resolver el valor del operando ', self.line,
+                                                self.column)
+                            return
                         tmp.add_exp(temp, left_value.value, right_value.value, op)
             else:
                 tmp.add_exp(temp, 0, left_value.value, '-')

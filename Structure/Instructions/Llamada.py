@@ -127,14 +127,14 @@ class Llamada(Instruction, Expression):
 
     def traverse(self):
         padre = Node("Llamada", "")
-        padre.AddHijo(Node(self.identificador, ""))
+        padre.AddHijo(Node(self.id, ""))
         padre.AddHijo(Node("(", ""))
 
-        if self.param_list.length > 0:
+        if len(self.param_list) > 0:
             hijo_param = Node("PARAMETROS", "")
 
             for param in self.param_list:
-                hijo_param.AddHijo(param.recorrer())
+                hijo_param.AddHijo(param.traverse())
             padre.AddHijo(hijo_param)
 
         padre.AddHijo(Node(")", ""))

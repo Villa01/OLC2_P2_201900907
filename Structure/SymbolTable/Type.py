@@ -32,6 +32,25 @@ def get_type(var_value):
     return t
 
 
+def get_stype(types):
+    if types == Types.INT64:
+        return 'Int64'
+    elif types == Types.ARRAY:
+        return 'Array'
+    elif types == Types.STRING:
+        return 'String'
+    elif types == Types.BOOL:
+        return 'Bool'
+    elif types == Types.FLOAT64:
+        return 'Float64'
+    elif types == Types.RANGE:
+        return 'Range'
+    elif types == Types.CHAR:
+        return 'Char'
+    else:
+        return 'Nothing'
+
+
 class Type:
 
     def __init__(self, stype: str) -> None:

@@ -76,6 +76,10 @@ class Asignation(Instruction):
 
         val: Return = self.variable.value.compilar(driver, symbol_table, tmp)
 
+        if val is None:
+            driver.agregarError(f'El valor a asignar no se pudo resolver', self.line, self.column)
+            return
+
         if not symbol_table.exist(self.id):
             symbol_table.add(self.id, Symbol(1, self.type, self.id, val.value, None, False))
 

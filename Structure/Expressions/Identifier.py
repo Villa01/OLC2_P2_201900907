@@ -35,16 +35,16 @@ class Identifier(Expression):
 
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal) -> Return:
         var = symbol_table.getSymbol(self.id)
-
-        t = None
-        try:
-            t = var.symbol_type.type
-        except:
-            t = var.symbol_type
-
         if var is None:
             driver.agregarError('La variable no ha sido inicializada', self.line, self.column)
             return
+        t = None
+        try:
+            t = var.symbol_type.type
+        except AttributeError:
+            t = var.symbol_type
+
+
         temp = tmp.new_temp()
         temp_pos = var.position
         if not var.is_global:

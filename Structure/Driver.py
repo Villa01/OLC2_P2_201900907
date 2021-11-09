@@ -1,4 +1,4 @@
-from Structure.SymbolTable.Type import Type
+from Structure.SymbolTable.Type import get_stype
 from Structure.SymbolTable.Symbol import Symbol
 from Structure.SymbolTable.SymbolTable import SymbolTable
 import sys
@@ -64,7 +64,9 @@ class Driver:
                      ";}</style></header><body> "
         cuerpohtml += "<table id=\"tabla\">"
         cuerpohtml += "<thead>"
-        cuerpohtml += "<tr>" + "<td colspan=\"6\">Tabla de Simbolo</td>" + "</tr>" + "<tr>" + "<th>Rol</th>" + "<th>Nombre</th>" + "<th>Tipo</th>" + "<th>Ambito</th>" + "<th>Valor</th>" + "<th>Paramtros</th>" + "</tr>" + "</thead>"
+        cuerpohtml += "<tr>" + "<td colspan=\"6\">Tabla de Simbolo</td>" + "</tr>" + "<tr>" + "<th>Rol</th>"\
+                      "<th>Nombre</th>" + "<th>Tipo</th>" + "<th>Ambito</th>" + "<th>Valor</th>" + "<th>Paramtros</th>"\
+                      "</tr>" + "</thead> "
 
         numero = 1
         for tabla in self.symbolTable:
@@ -72,7 +74,7 @@ class Driver:
                 cuerpohtml += "<tr>" + "<td>" + self.getRol(sim) + "</td><td>"
                 cuerpohtml += sim.identifier + "</td><td>" + self.getType(sim) + "</td><td>" + self.getEnv(
                     tabla) + "</td><td>"
-                cuerpohtml += self.getValor(sim) + "</td><td>" + self.parametros(sim) + "</td>" + "</tr>"
+                cuerpohtml += f'{self.getValor(sim)}</td><td>{self.parametros(sim)}</td></tr>'
                 numero += 1
 
         cuerpohtml += '</body></html>'
@@ -94,10 +96,16 @@ class Driver:
             return '...'
 
     def getType(self, sim: Symbol):
-        return sim.symbol_type.stype.lower()
+        try:
+            return sim.symbol_type.stype
+        except AttributeError:
+            return get_stype(sim.symbol_type)
 
     def getRol(self, sim: Symbol):
-        return sim.symbol_type.stype
+        try:
+            return sim.symbol_type.stype
+        except AttributeError:
+            return get_stype(sim.symbol_type)
 
     def getEnv(self, table: SymbolTable):
         if table.env:

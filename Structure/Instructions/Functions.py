@@ -69,7 +69,7 @@ class Function(Symbol, Instruction):
         if len(self.param_list) > 0:
             hijo_param = Node("PARAMETROS", "")
             for param in self.param_list:
-                hijo_param.AddHijo(Node(param.traverse()))
+                hijo_param.AddHijo(Node(param.identifier,""))
             padre.AddHijo(hijo_param)
         padre.AddHijo(Node(")", ""))
 
