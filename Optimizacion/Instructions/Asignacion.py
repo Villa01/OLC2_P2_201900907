@@ -16,6 +16,11 @@ class Assignment(C3DInstruction):
             aux = self.place.getCode() == self.exp.right.getCode() or self.place.getCode() == self.exp.left.getCode()
         return aux
 
+    def contiene(self, text):
+        if text == self.place.getCode() or text == self.exp.getCode():
+            return True
+        return False
+
     def getCode(self):
         if self.deleted:
             return ''

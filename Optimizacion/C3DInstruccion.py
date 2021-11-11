@@ -8,6 +8,7 @@ class C3DInstruction(ABC):
         self.column = column
         self.haveInt = False
         self.deleted = False
+        self.isLeader = False
 
     @abstractmethod
     def getCode(self):

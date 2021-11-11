@@ -67,6 +67,9 @@ def compilar():
     return json.jsonify(resp)
 
 
+optimizador = None
+
+
 @app.route('/reportes', methods=['POST'])
 def rep():
     print('Prueba reportes')
@@ -84,7 +87,7 @@ def rep():
     reportes(ast, driver, symbol_table)
 
     resp = {
-        "status" : 200
+        "status": 200
     }
     return json.jsonify(resp)
 
@@ -95,6 +98,9 @@ def mirilla():
     input = data["text"]
 
     instructions = Optimizacion.parser2.parse(input)
+
+    global optimizador
+    optimizador = instructions
 
     instructions.Mirilla()
 
@@ -111,6 +117,8 @@ def bloques():
     try:
         data = request.get_json(force=True)
         input = data["text"]
+        global optimizador
+        optimizador = Optimizacion.parser2.parse(input)
 
         resp = {
             "text": input
@@ -126,7 +134,7 @@ def bloques():
 def reportes(ast, driver, symbol_table):
     raiz = ast.traverse()
     dot_txt = raiz.GraficarSintactico()
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets',  'err.html')
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets', 'err.html')
     f = open(path, 'w+')
     err = driver.graficar_er(driver, symbol_table)
     x = f.write(err)
@@ -138,7 +146,14 @@ def reportes(ast, driver, symbol_table):
     y = ts_file.write(ts_t)
     ts_file.close()
 
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets',  'ast.svg')
+    if optimizador:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets', 'optimizacion.html')
+        ts_file = open(path, 'w+')
+        op_t = optimizador.generar_reporte()
+        y = ts_file.write(op_t)
+        ts_file.close()
+
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets', 'ast.svg')
     graph = pydot.graph_from_dot_data(dot_txt)
     graph[0].write_svg(path)
 
