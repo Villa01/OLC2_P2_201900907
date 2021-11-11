@@ -110,7 +110,8 @@ class Optimizador:
                     aux = 0
                     # Dar una pasada completa
                     while (tamanio + aux) <= len(func.instr):
-                        #flagOpt = flagOpt or self.Regla1(func.instr[0 + aux: tamanio + aux])
+                        flagOpt = flagOpt or self.Regla1(func.instr[0 + aux: tamanio + aux])
+                        flagOpt = flagOpt or self.Regla2(func.instr[0 + aux: tamanio + aux])
                         flagOpt = flagOpt or self.Regla3(func.instr[0 + aux: tamanio + aux])
                         flagOpt = flagOpt or self.Regla6(func.instr[0 + aux: tamanio + aux])
                         flagOpt = flagOpt or self.Regla7(func.instr[0 + aux: tamanio + aux])
@@ -124,9 +125,8 @@ class Optimizador:
         ret = False
 
         for i in range(len(array)):
-            print(f'i: {i}')
             actual = array[i]
-            cambia = False
+            apariciones = 0
             exp_actual = actual.getCode()
             if type(actual) is Assignment:
 
@@ -134,20 +134,54 @@ class Optimizador:
                     if j <= i:
                         continue
                     comp = array[j]
-                    prueba = comp.getCode()
+                    if not comp.deleted and type(comp) is Label:
+                        apariciones += 1
                     if not actual.deleted and not comp.deleted and type(actual) is Assignment and \
                             type(comp) is Assignment and actual is not comp:
-                        if comp.place.getCode() == actual.place.getCode():
-                            cambia = True
-                        if comp.exp.getCode() == actual.place.getCode():
+                        # if actual.place.getCode() == comp.place.getCode():
+                        #    apariciones += 1
+                        if comp.exp.getCode() == actual.place.getCode() \
+                                and comp.place.getCode() == actual.exp.getCode() and apariciones < 1:
                             optimizado = exp_actual
                             exp_actual += comp.getCode()
-                            print(exp_actual)
                             comp.deleted = True
                             self.agregar_optimizacion('Mirilla', 'Regla 2', exp_actual, optimizado, actual.line)
                             exp_actual = ''
                             ret = True
                             cambia = False
+        return ret
+
+    def Regla2(self, array):
+        ret = False
+
+        for i in range(len(array)):
+            actual = array[i]
+            apariciones = 0
+            eliminar = False
+            inicio = i
+            fin = 0
+            if not actual.deleted and type(actual) is Goto:
+                exp_actual = actual.getCode() + '\n'
+                optimizado = ''
+                for j in range(len(array)):
+
+                    if j <= i:
+                        continue
+                    comp = array[j]
+                    exp_actual += comp.getCode() + '\n'
+                    if not comp.deleted and type(comp) is Label and comp.id != actual.label:
+                        apariciones += 1
+                    if type(comp) is Label and comp.id == actual.label:
+                        eliminar = True
+                        optimizado = comp.getCode()
+                        fin = j
+                        break
+                if eliminar and apariciones < 1:
+                    for num in range(inicio, fin):
+                        array[num].deleted = True
+                        ret = True
+
+                    self.agregar_optimizacion('Mirilla', 'Regla 2', exp_actual, optimizado, actual.line)
         return ret
 
     def Regla3(self, array):
@@ -214,12 +248,19 @@ class Optimizador:
         cuerpohtml += " <table id=\"tabla\">"
         cuerpohtml += " <thead>"
         cuerpohtml += "<tr>" + "<td colspan=\"6\">Reporte de optimizacion</td>" + "</tr>" + "<tr>" \
-                                                                                            "<th>Tipo de optimizacion</th><th>Regla aplicada</th><th>Expresion original</th>" \
-                                                                                            "<th>Expresion optimizada</th><th>Fin</th>"
+                                                                                            "<th>Tipo de " \
+                                                                                            "optimizacion</th><th" \
+                                                                                            ">Regla " \
+                                                                                            "aplicada</th><th" \
+                                                                                            ">Expresion " \
+                                                                                            "original</th>" \
+                                                                                            "<th>Expresion " \
+                                                                                            "optimizada</th><th>Fila" \
+                                                                                            "</th> "
 
         for opt in self.optimizaciones:
-            cuerpohtml += f'<tr><td>{opt.tipo}</td><td>{opt.regla}</td><td>{opt.expresion_original}</td>' \
-                          f'<td>{opt.expresion_optimizada}</td><td>{opt.fila}</td></tr>'
+            cuerpohtml += f'<tr><td>{opt.tipo}</td><td>{opt.regla}</td><td><pre>{opt.expresion_original}</pre></td>' \
+                          f'<td><pre>{opt.expresion_optimizada}</pre></td><td>{opt.fila}</td></tr>'
 
         cuerpohtml += '</body></html>'
         return cuerpohtml
