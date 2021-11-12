@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, json, request
+from flask import Flask, json, request, send_file
 from flask.templating import render_template
 from flask_cors import CORS
 from Structure.SymbolTable.SymbolTable import SymbolTable
@@ -109,6 +109,13 @@ def mirilla():
         "text": output
     }
     return resp
+
+
+@app.route('/static/assets/<nombre>', methods=['GET'])
+def file(nombre):
+    ruta = os.path.abspath(f'./static/assets/{nombre}')
+    print(ruta)
+    return send_file(ruta, as_attachment=True)
 
 
 @app.route('/bloques', methods=['POST'])
