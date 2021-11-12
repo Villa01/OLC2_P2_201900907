@@ -72,7 +72,6 @@ optimizador = None
 
 @app.route('/reportes', methods=['POST'])
 def rep():
-    print('Prueba reportes')
     data = request.get_json(force=True)
     input = data["text"]
 
@@ -132,8 +131,10 @@ def bloques():
 
 
 def reportes(ast, driver, symbol_table):
-    raiz = ast.traverse()
-    dot_txt = raiz.GraficarSintactico()
+    #raiz = ast.traverse()
+    #dot_txt = raiz.GraficarSintactico()
+
+
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets', 'err.html')
     f = open(path, 'w+')
     err = driver.graficar_er(driver, symbol_table)
@@ -153,15 +154,15 @@ def reportes(ast, driver, symbol_table):
         y = ts_file.write(op_t)
         ts_file.close()
 
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets', 'ast.svg')
-    graph = pydot.graph_from_dot_data(dot_txt)
-    graph[0].write_svg(path)
+    #path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'assets', 'ast.svg')
+    #graph = pydot.graph_from_dot_data(dot_txt)
+    #graph[0].write_svg(path)
 
     return {
         "text": driver.console,
         "err": err,
         "ts": ts_t,
-        "graph": dot_txt
+        #"graph": dot_txt
     }
 
 

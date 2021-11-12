@@ -345,7 +345,7 @@ def p_lista_parametros_tipo(t):
     parametros : parametros COMA ID DOSPTS DOSPTS tipo
     """
     t[0] = t[1]
-    t[0].append(Symbol(1, t[5], t[3], None, None, False))
+    t[0].append(Symbol(1, t[6], t[3], None, None, False))
 
 
 """

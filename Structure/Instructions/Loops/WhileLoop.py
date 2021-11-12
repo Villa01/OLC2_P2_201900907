@@ -51,6 +51,9 @@ class WhileLoop(Instruction):
         driver.agregarTabla(ts_local)
         ts_local.break_lbl = condition.false_lbl
         ts_local.continue_lbl = continue_lbl
+        if symbol_table.return_lbl == '':
+            symbol_table.return_lbl = tmp.new_label()
+        ts_local.return_lbl = symbol_table.return_lbl
 
         tmp.imprimir_label(condition.true_lbl)
 
@@ -66,10 +69,10 @@ class WhileLoop(Instruction):
         padre.AddHijo(Node("while", ""))
         padre.AddHijo(self.condition.traverse())
 
-        if self.list_ins and len(self.list_ins) > 0:
+        if self.ins_list and len(self.ins_list) > 0:
             hijo_ins = Node("INSTRUCCIONES", "")
 
-            for ins in self.list_ins:
+            for ins in self.ins_list:
                 hijo_ins.AddHijo(ins.traverse())
             padre.AddHijo(hijo_ins)
 

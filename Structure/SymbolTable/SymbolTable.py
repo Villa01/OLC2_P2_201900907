@@ -17,6 +17,11 @@ class SymbolTable:
         self.break_lbl = ''
         self.continue_lbl = ''
         self.return_lbl = ''
+        if prev is not None:
+            self.size = self.prev.size
+            self.break_lbl = self.prev.break_lbl
+            self.continue_lbl = self.prev.continue_lbl
+            self.return_lbl = self.prev.return_lbl
 
     def add(self, idd: str, symbol: Symbol):
         symbol.in_heap = symbol.symbol_type == Types.STRING or symbol.symbol_type == Types.STRUCT

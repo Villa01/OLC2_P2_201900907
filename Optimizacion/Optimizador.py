@@ -36,7 +36,6 @@ class Optimizador:
         self.GenerarLideres()
         self.CrearBloques()
         self.ConnectBloques()
-        print('Prueba')
 
     def GenerarLideres(self):
         # Por cada funcion
@@ -99,7 +98,7 @@ class Optimizador:
     def Mirilla(self):
         # Por cada funcion
         for func in self.code:
-            tamanio = 10
+            tamanio = 20
 
             # Mientras no nos hemos pasado del tamaño (Fin del código)
             while tamanio <= len(func.instr):
@@ -136,6 +135,7 @@ class Optimizador:
                     comp = array[j]
                     if not comp.deleted and type(comp) is Label:
                         apariciones += 1
+                        break
                     if not actual.deleted and not comp.deleted and type(actual) is Assignment and \
                             type(comp) is Assignment and actual is not comp:
                         # if actual.place.getCode() == comp.place.getCode():
@@ -145,7 +145,7 @@ class Optimizador:
                             optimizado = exp_actual
                             exp_actual += comp.getCode()
                             comp.deleted = True
-                            self.agregar_optimizacion('Mirilla', 'Regla 2', exp_actual, optimizado, actual.line)
+                            self.agregar_optimizacion('Mirilla', 'Regla 1', exp_actual, optimizado, actual.line)
                             exp_actual = ''
                             ret = True
                             cambia = False
@@ -259,6 +259,10 @@ class Optimizador:
                                                                                             "</th> "
 
         for opt in self.optimizaciones:
+            opt.expresion_optimizada = opt.expresion_optimizada.replace('<', '&lt;')
+            opt.expresion_optimizada = opt.expresion_optimizada.replace('>', '&gt;')
+            opt.expresion_optimizada = opt.expresion_optimizada.replace('{', '&lcub;')
+            opt.expresion_optimizada = opt.expresion_optimizada.replace('}', '&rcub;')
             cuerpohtml += f'<tr><td>{opt.tipo}</td><td>{opt.regla}</td><td><pre>{opt.expresion_original}</pre></td>' \
                           f'<td><pre>{opt.expresion_optimizada}</pre></td><td>{opt.fila}</td></tr>'
 

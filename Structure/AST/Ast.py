@@ -20,7 +20,7 @@ class Ast:
             if not isinstance(ins, Function):
                 ins.ejecutar(driver, ts)
 
-    def compilar(self, driver, st, tmp: Temporal):
+    def compilar(self, driver, st:  SymbolTable, tmp: Temporal):
         for ins in self.instruction_list:
             if isinstance(ins, Function):
                 ins.addFunctionSymbol(driver, st)
@@ -28,6 +28,8 @@ class Ast:
         for ins in self.instruction_list:
             if not isinstance(ins, Function):
                 ins.compilar(driver, st, tmp)
+        if st.return_lbl != '':
+            tmp.imprimir_label(st.return_lbl)
 
         for ins in self.instruction_list:
             if isinstance(ins, Function):

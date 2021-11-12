@@ -125,7 +125,7 @@ class VectorAccess(Expression):
                 valor = pos_valor
                 tmp.get_heap(pos_valor, valor)
 
-                tmp.imprimir_label(symbol_table.return_lbl)
+                #tmp.imprimir_label(symbol_table.return_lbl)
                 tmp.add_comment("Fin acceso vector")
 
                 return Return(valor, t, True)
@@ -133,7 +133,6 @@ class VectorAccess(Expression):
                 temp = tmp.new_temp()
                 tmp.get_heap(temp, pos_valor)
                 temp_pos = temp
-
 
     def traverse(self):
         padre = Node("VECTOR", "")
