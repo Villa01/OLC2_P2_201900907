@@ -18,7 +18,7 @@ class ContinueStructure (Instruction):
         if symbol_table.continue_lbl == '':
             driver.agregarError('Continue no esperado', 0, 0)
             return
-
+        tmp.add_comment('Expresion continue')
         tmp.add_goto(symbol_table.continue_lbl)
 
     def traverse(self):

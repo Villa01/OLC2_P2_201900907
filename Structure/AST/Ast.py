@@ -29,6 +29,8 @@ class Ast:
             if not isinstance(ins, Function):
                 ins.compilar(driver, st, tmp)
         if st.return_lbl != '':
+            tmp.add_comment('Goto porque go da error')
+            tmp.add_goto(st.return_lbl)
             tmp.imprimir_label(st.return_lbl)
 
         for ins in self.instruction_list:

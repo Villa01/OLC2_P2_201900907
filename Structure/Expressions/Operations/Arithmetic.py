@@ -326,6 +326,8 @@ class Arithmetic(Operation, Expression):
                         tmp.add_exp(temp, left_value.value, right_value.value, op)
 
                     tmp.imprimir_label(salida)
+
+                    return Return(temp, Types.FLOAT64, True)
                 else:
                     if op == '*' and left_value.type == Types.STRING and right_value.type == Types.STRING:
                         if right_value is None:

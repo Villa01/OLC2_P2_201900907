@@ -259,6 +259,12 @@ class Optimizador:
                                                                                             "</th> "
 
         for opt in self.optimizaciones:
+
+            opt.expresion_original = opt.expresion_original.replace('<', '&lt;')
+            opt.expresion_original = opt.expresion_original.replace('>', '&gt;')
+            opt.expresion_original = opt.expresion_original.replace('{', '&lcub;')
+            opt.expresion_original = opt.expresion_original.replace('}', '&rcub;')
+
             opt.expresion_optimizada = opt.expresion_optimizada.replace('<', '&lt;')
             opt.expresion_optimizada = opt.expresion_optimizada.replace('>', '&gt;')
             opt.expresion_optimizada = opt.expresion_optimizada.replace('{', '&lcub;')

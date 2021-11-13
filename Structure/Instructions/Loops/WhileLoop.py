@@ -41,6 +41,7 @@ class WhileLoop(Instruction):
             driver.agregarError(f'La condicion del while debe ser del tipo bool', self.line, self.column)
 
     def compilar(self, driver: Driver, symbol_table: SymbolTable, tmp: Temporal):
+        tmp.add_comment('Compilacion while loop')
         continue_lbl = tmp.new_label()
         tmp.imprimir_label(continue_lbl)
 

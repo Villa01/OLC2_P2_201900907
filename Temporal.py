@@ -56,7 +56,7 @@ class Temporal:
         for imp in self.imports:
             header += f'\n\t"{imp}"'
         header += '\n);\n\n'
-        if self.tmp >= 0:
+        if self.tmp > 0:
             header += 'var '
             cont = 0
             for temp in self.temporales:
